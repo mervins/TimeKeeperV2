@@ -90,38 +90,41 @@ const ListItem = (props)=>{
             <RerunMessage closeModal={()=>setShowMessage(false)} confirmReRun={()=>confirmReRun} label="Confirm" message="Could you please confirm that you want to run the rider?"/>
         </Modal>}
         <div>
-            <div className="relative">  
-                <div className="pt-1"> 
-                    <div className="border py-1 text-black font-bold shadow-md flex items-center"> 
-                        <div className="pl-1"><div>Rider:</div>#{number}</div> 
-                        <div className="w-full">
-                            <center className="text-xs">{props.item.name}</center>
-                            <div className="flex justify-center">
-                                <span>{("0" + Math.floor((totalTime / 60000) % 60)).slice(-2)}:</span>
-                                <span>{("0" + Math.floor((totalTime / 1000) % 60)).slice(-2)}:</span>
-                                {/* <span>{("0" + ((totalTime / 10) % 100)).slice(-2)}</span>  */}
-                                <span>{stringPadding(Math.floor((totalTime / 10) % 100),2)}</span>
-                            </div>
+            <div className="relative">   
+                <div className="border py-1 text-black font-bold shadow-md flex items-center"> 
+                    <div className="pl-1"><center className="text-xs ">Rider</center>
+                        <div className="flex items-center">
+                            <div>#</div>
+                            <div className="text-2xl">{number}</div>
                         </div>
-                        <div className="flex gap-2 justify-center pr-2"> 
-                            {buttonsDisplay.current.start &&
-                                <div onClick={playHandle}><ButtonIcon title="Start" Icon={<Play/>}></ButtonIcon></div> 
-                            }
-                            {
-                                buttonsDisplay.current.end &&
-                                <div onClick={stopHandler}><ButtonIcon title="End" Icon={<Stop/>}></ButtonIcon></div>
-                            }
-                            {
-                                buttonsDisplay.current.save && 
-                                <div onClick={rerunHandler}><ButtonIcon title="Rerun" Icon={<Cycle/>}></ButtonIcon></div> 
-                            }
-                            {
-                                buttonsDisplay.current.save &&  
-                            <div onClick={() => {saveHandler();}}><ButtonIcon title="Save" Icon={<Save/>}></ButtonIcon></div>   
-                            }
+                    </div> 
+                    <div className="w-full">
+                        <center className="text-xs">{props.item.name}</center>
+                        <div className="flex justify-center">
+                            <span>{("0" + Math.floor((totalTime / 60000) % 60)).slice(-2)}:</span>
+                            <span>{("0" + Math.floor((totalTime / 1000) % 60)).slice(-2)}:</span>
+                            {/* <span>{("0" + ((totalTime / 10) % 100)).slice(-2)}</span>  */}
+                            <span>{stringPadding(Math.floor((totalTime / 10) % 100),2)}</span>
                         </div>
                     </div>
-                </div> 
+                    <div className="flex gap-2 justify-center pr-2"> 
+                        {buttonsDisplay.current.start &&
+                            <div onClick={playHandle}><ButtonIcon title="Start" Icon={<Play/>}></ButtonIcon></div> 
+                        }
+                        {
+                            buttonsDisplay.current.end &&
+                            <div onClick={stopHandler}><ButtonIcon title="End" Icon={<Stop/>}></ButtonIcon></div>
+                        }
+                        {
+                            buttonsDisplay.current.save && 
+                            <div onClick={rerunHandler}><ButtonIcon title="Rerun" Icon={<Cycle/>}></ButtonIcon></div> 
+                        }
+                        {
+                            buttonsDisplay.current.save &&  
+                        <div onClick={() => {saveHandler();}}><ButtonIcon title="Save" Icon={<Save/>}></ButtonIcon></div>   
+                        }
+                    </div>
+                </div>  
             </div>
         </div>
     </>);

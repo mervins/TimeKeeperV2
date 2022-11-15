@@ -163,34 +163,59 @@ const ResultModal = (props)=>{
                 </select>
                 <label className="peer-focus:font-medium absolute text-sm text-gray-600 duration-300 transform -translate-y-6 scale-75 top-3 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-85 peer-focus:-translate-y-6 ml-2 px-4 peer-placeholder-shown:-z-10 peer-focus:z-20 rounded-lg bg-white">Category</label>
             </div> 
-            <div className="m-4 text-[8px] md:text-base"> 
-                <div className="grid grid-cols-8 border">
+            <div className="m-2 text-[8px] md:text-base"> 
+                {/* <div className="grid grid-cols-8 border">
                     <div>Rank</div>
                     <div>Number</div>
                     <div className="col-span-2">Name</div>
                     <div>Stage 1</div> 
-                    <div>Stage 2</div>
-                    <div>Stage 3</div>
+                    <div>Stage 2</div> 
                     <div>Total Time</div>
-                </div>
+                </div> */}
                 {
                     filteringCagtegory?.map((item,index)=>{
                         return (
-                            <div key={index} className="grid grid-cols-8 border ">
-                                <div>{index+1}</div>
-                                <div>{item.id}</div>
-                                <div className="col-span-2">{item.name}</div>
-                                <div>{<NumberToTime stages={item?.stages} desc="Stage1"/>}</div> 
-                                <div>{<NumberToTime stages={item?.stages} desc="Stage2"/>}</div> 
-                                <div>{<NumberToTime stages={item?.stages} desc="Stage3"/>}</div>   
-                                <div className="cursor-pointer ml-1 flex gap-1 items-center" onClick={async()=>{ 
-                                    riderDetails.current.name = item.name; 
-                                    riderDetails.current.stages = item?.stages;
-                                    riderDetails.current.number = item.id;
-                                    setSumamry(true); }}>
-                                    <div>{<NumberToTime stages={[{"time":item.totalAll, "totalTime":"FINISHED"}]} desc="totalTime"/>}</div> 
-                                    <span><Edit/></span></div>
+                            <div className="relative py-1" key={index}>   
+                                <div className="border py-1 text-black font-bold shadow-md flex items-center rounded-lg">  
+                                    <div className="pl-1">
+                                        <div className="flex gap-1 items-center">
+                                            <div className="text-[.5rem]">Top</div>
+                                            <div className="text-xl text-yellow-500">{index+1}</div>
+                                        </div>
+                                    </div> 
+                                    <div className="w-full">
+                                        <div className="text-xs pl-4">#{item.id} {item.name}</div> 
+                                        <div className="grid grid-cols-4 pt-1">  
+                                            <div></div>
+                                            <div><div className="text-[.6rem]">Stage 1</div> {<NumberToTime stages={item?.stages} desc="Stage1"/>}</div> 
+                                            <div><div className="text-[.6rem]">Stage 2</div> {<NumberToTime stages={item?.stages} desc="Stage2"/>}</div> 
+                                            <div><div className="text-[.6rem]">Total Time</div>{<NumberToTime stages={[{"time":item.totalAll, "totalTime":"FINISHED"}]} desc="totalTime"/>}</div> 
+                                        </div>
+                                    </div> 
+                                    <div className="cursor-pointer mr-1 items-center" onClick={async()=>{ 
+                                        riderDetails.current.name = item.name; 
+                                        riderDetails.current.stages = item?.stages;
+                                        riderDetails.current.number = item.id;
+                                        setSumamry(true); }}> 
+                                        <span><Edit/></span></div>
+                                </div>  
                             </div>
+                            // <div key={index} className="grid grid-cols-8 border ">
+                            //     <div>{index+1}</div>
+                            //     <div>{item.id}</div>
+                            //     <div className="col-span-2">{item.name}</div>
+                            //     <div>{<NumberToTime stages={item?.stages} desc="Stage1"/>}</div> 
+                            //     <div>{<NumberToTime stages={item?.stages} desc="Stage2"/>}</div> 
+                            //     {/* <div>{<NumberToTime stages={item?.stages} desc="Stage3"/>}</div>    */}
+                            //     <div className="cursor-pointer ml-1 flex gap-1 items-center" onClick={async()=>{ 
+                            //         riderDetails.current.name = item.name; 
+                            //         riderDetails.current.stages = item?.stages;
+                            //         riderDetails.current.number = item.id;
+                            //         setSumamry(true); }}>
+                            //         <div>{<NumberToTime stages={[{"time":item.totalAll, "totalTime":"FINISHED"}]} desc="totalTime"/>}</div> 
+                            //         <span><Edit/></span></div>
+                            // </div>
+                        
                         );
                     })
                 }

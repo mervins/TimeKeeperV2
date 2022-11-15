@@ -6,8 +6,8 @@ const NumberToTime = ({stages,desc,showDel,close, number})=>{
     const milli = new Date();
     milli.setMilliseconds(hasKey[0]?.time);
     return (
-        <div className="flex"> 
-            {hasKey.length ? <div className="text-green-600">
+        <div className="flex text-sm"> 
+            {hasKey.length ? <div className={desc === "totalTime" ? "text-green-600" : "text-black"}>
                 <span>{("0" + Math.floor((hasKey[0].time  / 60000) % 60)).slice(-2)}:</span>
                 <span>{("0" + Math.floor((hasKey[0].time  / 1000) % 60)).slice(-2)}:</span> 
                 {/* <span>{stringPadding(Math.floor((hasKey[0].time / 10) % 100),2)}</span> */}

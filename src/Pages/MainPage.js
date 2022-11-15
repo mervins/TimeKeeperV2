@@ -94,7 +94,7 @@ const MainPage = ()=>{
     return (<> 
         {showModal.showNavBar && <div className="w-full -top-0 h-full absolute" >
             <div className="z-40 bg-white absolute right-1 h-full">
-                <div className="absolute z-20 top-1 -left-6 bg-red-500 rounded-full p-3 text-white cursor-pointer" onClick={()=>{setShowModal({...showModal, showNavBar:false});}}> <Close/></div>
+                <div className="absolute z-20 top-[3px] -left-6 bg-red-500 rounded-full p-3 text-white cursor-pointer" onClick={()=>{setShowModal({...showModal, showNavBar:false});}}> <Close/></div>
                 <div className="borde w-[340px] w-full rounded-l-lg"> 
                     <div className="mt-3 flex gap-1 justify-center items-center font-bold">
                         <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}>RANK</div>
@@ -110,7 +110,7 @@ const MainPage = ()=>{
                         <label className="peer-focus:font-medium absolute text-sm text-gray-600 duration-300 transform -translate-y-6 scale-75 top-3 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-85 peer-focus:-translate-y-6 ml-2 px-4 peer-placeholder-shown:-z-10 peer-focus:z-20 rounded-lg bg-white">Stage</label>
                     </div>
                     <div className="relative z-0 mt-6 group border-none m-2">
-                        <select onChange={(e)=>{console.log(e.target.value);setCurrentCategory(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
+                        <select value={currentCategory} onChange={(e)=>{console.log(e.target.value);setCurrentCategory(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
                             <option value={"19 below"}>19 Below</option>
                             <option value={"20-29"}>20 - 29</option>
                             <option value={"30-39"}>30 - 39</option> 
@@ -173,7 +173,7 @@ const MainPage = ()=>{
                     <div>{currentStage}</div>
                 </div>
                 <div className="container mx-auto">
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5 gap-2 mt-6">
+                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5 gap-2 mt-4">
                         {
                             ridersTest?.map((item,index)=>{
                                 return(

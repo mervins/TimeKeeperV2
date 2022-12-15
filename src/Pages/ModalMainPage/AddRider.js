@@ -77,7 +77,7 @@ const AddRider = ({riders,closeModal}) =>{
                         <div className="ml-3 col-span-2">#{item.number}</div>
                         <div className="col-span-2">{item.name}</div>
                         <div className="col-span-2">{item.category}</div>
-                        <div className="curspor pointer" onClick={()=>onDeleteHandler(item)}><ButtonIcon Icon={<Trash/>}/></div>
+                        <button className="curspor pointer" onClick={()=>onDeleteHandler(item)}><ButtonIcon Icon={<Trash/>}/></button>
                     </div>
                 );
             })

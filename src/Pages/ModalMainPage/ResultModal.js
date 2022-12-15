@@ -139,18 +139,18 @@ const ResultModal = (props)=>{
         }
         <div className="overflow-y-auto h-[90vh]"> 
             <div className="flex flex-row-reverse gap-2 mr-2 mt-2"> 
-                <div className="cursor-pointer p-2 border rounded-md bg-white shadow-md" onClick={props.closeModal}>Close</div>
-                <div className="p-2 border rounded-md bg-white shadow-md cursor-pointer" onClick={handleExport}>Export</div>
+                <button className="cursor-pointer p-2 border rounded-md bg-white shadow-md" onClick={props.closeModal}>Close</button>
+                <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer" onClick={handleExport}>Export</button>
                 <div>
                     <input type="file" name="file" className="custom-file-input hidden" id="inputGroupFile" required onChange={handleImport}
                         accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/> 
                     <label className="custom-file-label" htmlFor="inputGroupFile">
-                        <div className="p-2 border rounded-md bg-white shadow-md cursor-pointer">
+                        <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer">
                             Import
-                        </div>
+                        </button>
                     </label>
                 </div>
-                <div className="p-2 border rounded-md bg-white shadow-md cursor-pointer" onClick={handlerResult}>Results</div>
+                <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer" onClick={handlerResult}>Results</button>
             </div>
             <div className="relative z-0 mt-6 group border-none m-2">
                 <select onChange={(e)=>{setCurrentCategory(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">

@@ -189,9 +189,9 @@ const MainPage = ()=>{
             </div>
             {isPageWide && <div className="border max-w-[350px] w-full rounded-l-lg"> 
                 <div className="mt-3 flex gap-3 justify-center items-center font-bold">
-                    <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>setShowModal({...showModal, showResult:true})}>RANK</div>
-                    <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>setShowModal({...showModal, showImport:true})}>IMPORT</div>   
-                    <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>DeleteAllTables()}>CLEAR</div>
+                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>setShowModal({...showModal, showResult:true})}>RANK</button>
+                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>setShowModal({...showModal, showImport:true})}>IMPORT</button>   
+                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>DeleteAllTables()}>CLEAR</button>
                 </div>
                 <div className="relative z-0 mt-6 group border-none m-2">
                     <select onChange={(e)=>{setCurrentStage(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">

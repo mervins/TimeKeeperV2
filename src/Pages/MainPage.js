@@ -96,10 +96,10 @@ const MainPage = ()=>{
             <div className="z-40 bg-white absolute right-1 h-full">
                 <div className="absolute z-20 top-[3px] -left-6 bg-red-500 rounded-full p-3 text-white cursor-pointer" onClick={()=>{setShowModal({...showModal, showNavBar:false});}}> <Close/></div>
                 <div className="borde w-[340px] w-full rounded-l-lg"> 
-                    <div className="mt-3 flex gap-1 justify-center items-center font-bold">
-                        <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}>RANK</div>
-                        <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>setShowModal({...showModal, showImport:true,showNavBar:false})}>IMPORT</div>   
-                        <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>DeleteAllTables()}>CLEAR</div>
+                    <div className="mt-3 flex gap-1 justify-center items-center">
+                        <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-blue-500 text-white" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}>RANK</div>
+                        <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-orange-400 text-white" onClick={()=>setShowModal({...showModal, showImport:true,showNavBar:false})}>IMPORT</div>   
+                        <div className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-red-500 text-white" onClick={()=>DeleteAllTables()}>CLEAR</div>
                     </div>
                     <div className="relative z-0 mt-6 group border-none m-2">
                         <select value={currentStage} onChange={(e)=>{console.log(e.target.value);setCurrentStage(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
@@ -125,12 +125,12 @@ const MainPage = ()=>{
                     <div className="mx-2 relative overflow-y-auto h-[75vh]">
                         {filterCategory(currentCategory)?.map((item,index)=>{
                             return(
-                                <div key={index} className="w-full shadow-md">
-                                    <div className="grid grid-cols-8 gap-2 border-indigo-600 border py-1 mb-1 px-1 rounded-md justify-center items-center">
+                                <div key={index} className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through w-full shadow-md text-red-500 font-bold" : "no-underline w-full font-medium shadow-md"}>
+                                    <div className="grid grid-cols-8 gap-2 border py-1 mb-1 px-1 rounded-md justify-center items-center">
                                         <div className="col-span-5 ml-3"> 
-                                            <div className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through text-red-500 font-bold" : "no-underline font-bold"}>
+                                            <div className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through text-red-500 font-bold" : "no-underline"}>
                                                 #{item.number} {JSON.parse(item.status)[currentStage]}</div>
-                                            <div className="text-xs">{item.name}</div>
+                                            <div className="text-xs">Name: {item.name}</div>
                                         </div>
                                         <button className="cursor-pointer" onClick={()=>addRunner(item , StatusRider.ONBOARD)} 
                                             disabled={jsonParserStatus(item.status,StatusRider.WAITING)}>
@@ -148,7 +148,7 @@ const MainPage = ()=>{
             </div> 
             <div className="z-30 w-full h-full absolute -top-0 bg-black/75" onClick={()=>{setShowModal({...showModal, showNavBar:false});}}></div>
         </div>}
-        <div className="absolute left-3 top-1 w-28 py-1 border rounded-md bg-white shadow-md cursor-pointer text-center font-bold" onClick={()=>setShowModal({...showModal, showAddRider:true})}>ADD RIDER</div>
+        <div className="absolute left-3 top-1 w-28 py-1 border rounded-md bg-white shadow-md cursor-pointer text-center bg-indigo-500 text-white" onClick={()=>setShowModal({...showModal, showAddRider:true})}>Add Rider</div>
         <div className="relative h-[95vh] flex w-full mt-1">   
             {!isPageWide &&<div onClick={()=>{setShowModal({...showModal, showNavBar:true});}} className="absolute right-6 -top-8"><Menu/></div>}
             {listItem}  
@@ -169,8 +169,8 @@ const MainPage = ()=>{
                 <AddRider riders={ridersTest} closeModal={()=>setShowModal({...showModal, showAddRider:false})}/>
             </Modal>}
 
-            <div className="border-2 grow p-2 mx-2 rounded-lg overflow-y-auto h-[95vh]">
-                <div className="flex bg-violet-500 px-3 py-2 justify-between font-bold text-white">
+            <div className="border grow p-2 mx-2 rounded-lg overflow-y-auto h-[95vh]">
+                <div className="flex rounded-md px-3 py-2 justify-between font-bold border">
                     <div>Cat: {currentCategory}</div> 
                     <div>{currentStage}</div>
                 </div>
@@ -190,10 +190,10 @@ const MainPage = ()=>{
                 </div>
             </div>
             {isPageWide && <div className="border max-w-[350px] w-full rounded-l-lg"> 
-                <div className="mt-3 flex gap-3 justify-center items-center font-bold">
-                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>setShowModal({...showModal, showResult:true})}>RANK</button>
-                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>setShowModal({...showModal, showImport:true})}>IMPORT</button>   
-                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center" onClick={()=>DeleteAllTables()}>CLEAR</button>
+                <div className="mt-3 flex gap-3 justify-center items-center">
+                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-blue-500 text-white" onClick={()=>setShowModal({...showModal, showResult:true})}>RANK</button>
+                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-orange-400 text-white" onClick={()=>setShowModal({...showModal, showImport:true})}>IMPORT</button>   
+                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-red-500 text-white" onClick={()=>DeleteAllTables()}>CLEAR</button>
                 </div>
                 <div className="relative z-0 mt-6 group border-none m-2">
                     <select onChange={(e)=>{setCurrentStage(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
@@ -220,7 +220,7 @@ const MainPage = ()=>{
                     {filterCategory(currentCategory)?.map((item,index)=>{
                         return(
                             <div key={index} className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through w-full shadow-md text-red-500 font-bold" : "no-underline w-full font-medium shadow-md"}>
-                                <div className="grid grid-cols-8 gap-4  border-indigo-600 border py-1 mb-1 px-1 rounded-md">
+                                <div className="grid grid-cols-8 gap-4 border py-1 mb-1 px-1 rounded-md">
                                     <div className="col-span-5 ml-3"> 
                                         <div className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through text-red-500 font-bold" : "no-underline font-bold"}>#{item.number} {JSON.parse(item.status)[currentStage]}</div>
                                         <div className="text-xs">{item.name}</div>

@@ -111,6 +111,8 @@ const MainPage = ()=>{
                     </div>
                     <div className="relative z-0 mt-6 group border-none m-2">
                         <select value={currentCategory} onChange={(e)=>{console.log(e.target.value);setCurrentCategory(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
+                            <option value={"Beginner"}>Beginner</option>
+                            <option value={"Advance"}>Advance</option>
                             <option value={"19 below"}>19 Below</option>
                             <option value={"20-29"}>20 - 29</option>
                             <option value={"30-39"}>30 - 39</option> 

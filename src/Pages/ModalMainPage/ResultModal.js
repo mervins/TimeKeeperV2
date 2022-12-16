@@ -95,7 +95,9 @@ const ResultModal = (props)=>{
                 const sheets = wb.SheetNames; 
                 if (sheets.length) { 
                     let importFinished = utils.sheet_to_json(wb.Sheets[sheets[0]]); 
-                    let difference = importFinished.filter((item)=> stagesFinished.every(item2 => item2.rider_id != item.rider_id)); 
+                    let difference = importFinished.filter((item)=> stagesFinished.every(item2 => item2.rider_id != item.rider_id));  
+                    console.log(stagesFinished);
+                    console.log(importFinished);
                     AddMutipleRiderFinished(difference); 
                 }
             };
@@ -145,9 +147,9 @@ const ResultModal = (props)=>{
                     <input type="file" name="file" className="custom-file-input hidden" id="inputGroupFile" required onChange={handleImport}
                         accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/> 
                     <label className="custom-file-label" htmlFor="inputGroupFile">
-                        <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-orange-400 text-white">
+                        <div className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-orange-400 text-white">
                             Import
-                        </button>
+                        </div>
                     </label>
                 </div>
                 <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white" onClick={handlerResult}>Results</button>

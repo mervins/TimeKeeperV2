@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/TimeKeeperV2/static/css/main.7c291455.css",
-    "main.js": "/TimeKeeperV2/static/js/main.cb3fde1a.js",
+    "main.css": "/TimeKeeperV2/static/css/main.f017e899.css",
+    "main.js": "/TimeKeeperV2/static/js/main.0062fc96.js",
     "static/js/787.7efd31bd.chunk.js": "/TimeKeeperV2/static/js/787.7efd31bd.chunk.js",
     "service-worker.js": "/TimeKeeperV2/service-worker.js",
     "index.html": "/TimeKeeperV2/index.html",
-    "main.7c291455.css.map": "/TimeKeeperV2/static/css/main.7c291455.css.map",
-    "main.cb3fde1a.js.map": "/TimeKeeperV2/static/js/main.cb3fde1a.js.map",
+    "main.f017e899.css.map": "/TimeKeeperV2/static/css/main.f017e899.css.map",
+    "main.0062fc96.js.map": "/TimeKeeperV2/static/js/main.0062fc96.js.map",
     "787.7efd31bd.chunk.js.map": "/TimeKeeperV2/static/js/787.7efd31bd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.7c291455.css",
-    "static/js/main.cb3fde1a.js"
+    "static/css/main.f017e899.css",
+    "static/js/main.0062fc96.js"
   ]
 }

@@ -7,7 +7,7 @@ import Modal from "../../components/Modal/Modal";
 const ResultModal = (props)=>{
 
     const {ridersTest,stagesFinished} = props;
-    const [currentCategory,setCurrentCategory] = useState("19 below"); 
+    const [currentCategory,setCurrentCategory] = useState("Beginner"); 
     const [summary, setSumamry] = useState(false);
     const riderDetails = useRef({
         name:"",
@@ -154,6 +154,8 @@ const ResultModal = (props)=>{
             </div>
             <div className="relative z-0 mt-6 group border-none m-2">
                 <select onChange={(e)=>{setCurrentCategory(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
+                    <option value={"Beginner"}>Beginner</option>
+                    <option value={"Advance"}>Advance</option>
                     <option value={"19 below"}>19 Below</option>
                     <option value={"20-29"}>20 - 29</option>
                     <option value={"30-39"}>30 - 39</option> 
@@ -176,7 +178,7 @@ const ResultModal = (props)=>{
                     filteringCagtegory?.map((item,index)=>{
                         return (
                             <div className="relative py-1" key={index}>   
-                                <div className="border py-1 text-black font-bold shadow-md flex items-center rounded-lg">  
+                                <div className="border py-1 text-black font-bold shadow-md flex items-center rounded-lg gap-4">  
                                     <div className="pl-1">
                                         <div className="flex gap-1 items-center">
                                             <div className="text-[.5rem]">Top</div>
@@ -184,11 +186,11 @@ const ResultModal = (props)=>{
                                         </div>
                                     </div> 
                                     <div className="w-full">
-                                        <div className="text-xs pl-4">#{item.id} {item.name}</div> 
-                                        <div className="grid grid-cols-4 pt-1">  
-                                            <div></div>
+                                        <div className="text-xs">#{item.id} {item.name}</div> 
+                                        <div className="grid grid-cols-4 pt-1">   
                                             <div><div className="text-[.6rem]">Stage 1</div> {<NumberToTime stages={item?.stages} desc="Stage1"/>}</div> 
                                             <div><div className="text-[.6rem]">Stage 2</div> {<NumberToTime stages={item?.stages} desc="Stage2"/>}</div> 
+                                            <div><div className="text-[.6rem]">Stage 3</div> {<NumberToTime stages={item?.stages} desc="Stage3"/>}</div> 
                                             <div><div className="text-[.6rem]">Total Time</div>{<NumberToTime stages={[{"time":item.totalAll, "totalTime":"FINISHED"}]} desc="totalTime"/>}</div> 
                                         </div>
                                     </div> 

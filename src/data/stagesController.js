@@ -36,35 +36,36 @@ export const FilterPerStage = ()=>{
 export const getRider = async(riderID)=>{
     const rider = await db.stages
         .where("rider_id").equals(riderID)
-        .toArray();
-    // console.log("======================");
-    // console.log(rider); 
+        .toArray(); 
     return rider;
 };
 
-export const TotalTime = (riders,finished,category) =>{  
+export const TotalTime = (riders,finished,category,stageServer) =>{  
     try{
         let playerFilter =  riders.filter(item => item.category === category);  
         let results = playerFilter.map((infoRider) => {
             let timeResult = finished?.filter(item => item.rider_id === infoRider.number).map(count => Object.assign({rider_id:count.rider_id, totalTime: count.totalTime, stage:count.stage ,id:count.id}));
             let overallTime = calculateTotal(timeResult,infoRider.number, infoRider.name);
             return overallTime;
-        }); 
-        return filterAndSortThem(results);
+        });  
+        return filterAndSortThem(results,stageServer);
     }catch(e){
         console.log(e);
     }
      
 };
 
-const filterAndSortThem = (checkPerStage) =>{
-    let mergeThem = [];
-    let checkStage1to3 = checkPerStage.filter(item => item.stages.length === 3).sort((a, b) =>  a.totalAll - b.totalAll);
-    let checkStage1to2 = checkPerStage.filter(item => item.stages.length === 2).sort((a, b) =>  a.totalAll - b.totalAll);
-    let checkStage1 = checkPerStage.filter(item => item.stages.length === 1).sort((a, b) =>  a.totalAll - b.totalAll);
-    let checkStageNothing = checkPerStage.filter(item => item.stages.length === 0).sort((a, b) =>  a.totalAll - b.totalAll);
-    mergeThem = [...checkStage1to3, ...checkStage1to2, ...checkStage1, ...checkStageNothing];
-    return mergeThem;
+const filterAndSortThem = (checkPerStage,stageServer) =>{ 
+    // let mergeThem = [];
+    let mergeThem2 = []; 
+    // let checkStageNothing = checkPerStage.filter(item => item.stages.length === 0).sort((a, b) =>  a.totalAll - b.totalAll);
+    // mergeThem2 = [...checkStageNothing,...mergeThem2];
+    stageServer.map((stage,index)=> { 
+        let newData = checkPerStage.filter(item => item.stages.length === index+1).sort((a, b) =>  b.totalAll - a.totalAll);
+        mergeThem2 = [...newData,...mergeThem2];
+        
+    });  
+    return mergeThem2;
 };
 
 const calculateTotal = (collectTime,rider_id,name)=>{
@@ -74,7 +75,7 @@ const calculateTotal = (collectTime,rider_id,name)=>{
     for (const n in collectTime) { 
         totalAll = totalAll + collectTime[n].totalTime;
         labelStage = collectTime[n].stage;
-        stages.push({[labelStage]:"FINISHED", time:collectTime[n].totalTime, "id":collectTime[n].id});
+        stages.push({status:"FINISHED", time:collectTime[n].totalTime, "id":collectTime[n].id, stage:labelStage});
     }
     // console.log(stages);
     return {id:rider_id, totalAll:totalAll, stages:stages, name:name};

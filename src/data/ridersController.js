@@ -8,21 +8,35 @@ let Riders = () => {
 };
 
 export const AddIndividualRider = async(rider) => {
-    await db.riders.add(rider);
+    let stage = await db.stageGroup.toArray();
+    let status = stage.map(item => Object.assign({stage:item.name,status:"WAITING"}));
+    console.log(status);
+    console.log(rider);
+    // await db.riders.add(rider);
 };
 
 export const AddMutipleRider = async (rows) => {
-    await db.riders.bulkAdd(rows);
+    let stage = await db.stageGroup.toArray();
+    let statusRider = stage.map(item =>Object.assign({stage:item.name,status:"WAITING"}));
+    let riders = rows.map(rider => Object.assign(rider,{status:statusRider}));
+    console.log(riders);
+    await db.riders.bulkAdd(riders);
 };
 
 export const UpdateRider = async(details, status,stage) => {
     let updateStatus = await UpdateStingObjectStatus(details,status,stage);
+    console.log({...details, status:updateStatus});
     await db.riders.put({...details, status:updateStatus});
 };
 
-export const UpdateStingObjectStatus = async(details,status,stage) =>{
-    let riderStatus =  JSON.parse(details.status); 
-    return JSON.stringify({...riderStatus, [stage]:status}); 
+export const UpdateStingObjectStatus = async(details,statusUpdate,stage) =>{ 
+    let riderStatus =  details?.status.map((status) => { 
+        if(status.stage === stage){
+            status.status = statusUpdate; 
+        }
+        return status;
+    });   
+    return riderStatus; 
 };
 
 export const DeleteAllRiders = async() => {

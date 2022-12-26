@@ -1,6 +1,6 @@
 import { useState,useEffect,useRef } from "react";
 import ListItem from "../components/Card/ListItem";
-import { Close,Menu, AddUser,Trash,Setting, Category,Stage,Trophy} from "../components/Icons/Icons"; 
+import { Close,Menu, AddUser,Setting, Category,Stage,Trophy} from "../components/Icons/Icons"; 
 import { StatusRider } from "../data/DummyData";
 import Riders, { UpdateRider,DeleteRider,DeleteAllRiders } from "../data/ridersController";
 import Stages, {DeleteAllStages} from "../data/stagesController";
@@ -11,31 +11,30 @@ import Toast from "../components/Toast/Toast";
 import {toastProperties} from "../components/Toast/Toast";
 import { useMediaQuery } from "../Hooks/useMediaQuery"; 
 import RerunMessage from "./ModalMainPage/RerunMessage";
-import { ButtonIcon } from "../components/Button";
+// import { ButtonIcon } from "../components/Button";
 import AddRider from "./ModalMainPage/AddRider";
-import Mobile from "./Device/Mobile";
-import { motion,AnimatePresence  } from "framer-motion";
+import Mobile from "./Device/Mobile"; 
+import Select from "../UI/Select";
+import CategoryPage from "./ModalMainPage/Category";
+import StagesPage from "./ModalMainPage/StagesPage";
+import StageController from "../data/stageController";
+import CategoryContrller from "../data/categoryController";
 
-const menuVariants = {
-    open: { 
-        x: 5,
-    },
-    closed: {
-        x:500,
-    },
-};
-
-const MainPage = ()=>{   
-    const [isVisible,setisVisible] = useState(false);
-    const [currentCategory,setCurrentCategory] = useState("Beginner");
-    const [currentStage,setCurrentStage] = useState("Stage1"); 
+const MainPage = ()=>{  
+    let categoryServer = CategoryContrller();
+    let stageServer = StageController();  
+    const [currentCategory,setCurrentCategory] = useState();
+    const [currentStage,setCurrentStage] = useState(); 
     const [listToast, setListToast] = useState([]);   
     const [showModal, setShowModal] = useState({
         showImport:false,
         showResult:false,
         showNavBar:false,
         showDelete:false,
-        showAddRider:false
+        showAddRider:false,
+        showCategory:false,
+        showStages:false,
+        showSetting:false
     });
     let idRider = useRef();
     let ridersTest = Riders();
@@ -53,6 +52,20 @@ const MainPage = ()=>{
             clearInterval(interval);
         }; 
     }, [listToast]);
+
+    useEffect(() => {
+        if (typeof categoryServer != "undefined") { 
+            setCurrentCategory(categoryServer[0]?.name);
+            console.log(categoryServer);
+        }
+    }, [categoryServer]);
+    
+    useEffect(() => {
+        if (typeof stageServer != "undefined") { 
+            setCurrentStage(stageServer[0]?.name);
+            console.log(stageServer);
+        }
+    }, [stageServer]);
 
     const deleteToast = id => { 
         const toastListItem = listToast.findIndex(e => e.id === id); 
@@ -78,7 +91,11 @@ const MainPage = ()=>{
         return ridersTest?.filter(item => item.category === category);
     };
     
-    const jsonParserStatus = (value,status) => JSON.parse(value)[currentStage] != status;
+    const jsonParserStatus = (stages,status) =>{
+        let getStage = stages.filter(stage => stage.stage == currentStage); 
+        return getStage[0]?.status != status; 
+    };
+    
 
     const showToast = (type,message,title)=>{ 
         let toast = toastProperties(type,message,title);  
@@ -104,30 +121,32 @@ const MainPage = ()=>{
     );
 
     return (<> 
-        <AnimatePresence>{showModal.showNavBar && (<motion.div  className="z-30 bg-red-500 absolute right-1 h-[100vh] -top-0"
-            animate={showModal.showNavBar ? "open" : "closed"} variants={menuVariants} transition={{type:"spring"}}><Mobile currentCategory={currentCategory} currentStage={currentStage} jsonParserStatus={jsonParserStatus}
-                setShowModal={setShowModal} setCurrentStage={setCurrentStage} addRunner={addRunner}
-                setCurrentCategory={setCurrentCategory} DeleteAllTables={DeleteAllTables} filterCategory={filterCategory}
-                StatusRider={StatusRider} idRider={idRider} showModal={showModal} showNavBar={showModal.showNavBar}></Mobile></motion.div>)}</AnimatePresence>
-        {/* <div className="absolute left-3 top-1 w-28 py-1 border rounded-md bg-white shadow-md cursor-pointer text-center bg-indigo-500 text-white" onClick={()=>setShowModal({...showModal, showAddRider:true})}>Add Rider</div> */}
+        <Mobile currentCategory={currentCategory} currentStage={currentStage} jsonParserStatus={jsonParserStatus}
+            setShowModal={setShowModal} setCurrentStage={setCurrentStage} addRunner={addRunner}
+            setCurrentCategory={setCurrentCategory} DeleteAllTables={DeleteAllTables} filterCategory={filterCategory}
+            StatusRider={StatusRider} idRider={idRider} showModal={showModal} stageServer={stageServer} categoryServer={categoryServer}></Mobile> 
         <div className="relative h-[95vh] flex w-full mt-1">   
-            {!isPageWide &&<div onClick={()=>{setShowModal({...showModal, showNavBar:true});}} className="absolute right-2 -top-8"><Menu/></div>}
+            {!isPageWide &&<div onClick={()=>{setShowModal({...showModal, showNavBar:true});setCurrentCategory(categoryServer[0].name); setCurrentStage(stageServer[0].name);}} 
+                className="absolute left-2 -top-9"><Menu/></div>}
             {listItem}  
             {showModal.showImport && <Modal>
-                <ImportModal closeModal={()=>{
-                    setShowModal({...showModal, showImport:false}); 
-                }}
-                messageToast={()=>{showToast("success","Imported Files","Successfully");}} 
-                ridersTest={ridersTest}/> 
+                <ImportModal closeModal={()=>{setShowModal({...showModal, showImport:false});}} messageToast={()=>{showToast("success","Imported Files","Successfully");}} 
+                    ridersTest={ridersTest}/> 
             </Modal >}
             {showModal.showResult && <Modal withSize={true}> 
-                <ResultModal ridersTest={ridersTest} stagesFinished={stagesFinished} closeModal={()=>setShowModal({...showModal, showResult:false})}/>
+                <ResultModal ridersTest={ridersTest} stagesFinished={stagesFinished} closeModal={()=>setShowModal({...showModal, showResult:false})} categoryServer={categoryServer} stageServer={stageServer}/>
             </Modal>} 
             {showModal.showDelete && <Modal>
                 <RerunMessage label="Continue" closeModal={()=>setShowModal({...showModal, showDelete:false})} confirmReRun={()=>removeRider} message="Could you please confirm that you want to delete the rider?"/>
             </Modal>} 
-            {showModal.showAddRider && <Modal withSize={true}>
-                <AddRider riders={ridersTest} closeModal={()=>setShowModal({...showModal, showAddRider:false})}/>
+            {showModal.showAddRider && <Modal>
+                <AddRider riders={ridersTest} categoryServer={categoryServer} showToast={showToast} closeModal={()=>setShowModal({...showModal, showAddRider:false})}/>
+            </Modal>}  
+            {showModal.showCategory && <Modal>
+                <CategoryPage riders={ridersTest} showToast={showToast} closeModal={()=>setShowModal({...showModal, showCategory:false})}/>
+            </Modal>}
+            {showModal.showStages && <Modal>
+                <StagesPage riders={ridersTest} showToast={showToast} closeModal={()=>setShowModal({...showModal, showStages:false})}/>
             </Modal>}
 
             <div className="border grow p-2 overflow-y-auto h-[95vh] bg-[#E4E9F2]">
@@ -135,16 +154,7 @@ const MainPage = ()=>{
                     <div>Cat: {currentCategory}</div> 
                     <div>{currentStage}</div>
                 </div>
-                <div> 
-                    <AnimatePresence>
-                        {isVisible && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                            >akdka jdklasj ajd akdkaj dkadklaj dkasd kas</motion.div>
-                        )}
-                    </AnimatePresence>
+                <div>  
                 </div>
                 <div className="container mx-auto">
                     <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5 gap-2 mt-4">
@@ -167,28 +177,13 @@ const MainPage = ()=>{
                     <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-orange-400 text-white" onClick={()=>setShowModal({...showModal, showImport:true})}>IMPORT</button>   
                     <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-red-500 text-white" onClick={()=>DeleteAllTables()}>CLEAR</button>
                 </div>
-                <div className="relative z-0 mt-6 group border-none m-2">
-                    <select onChange={(e)=>{setCurrentStage(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
-                        <option value={"Stage1"}>Stage 1</option>
-                        <option value={"Stage2"}>Stage 2</option>
-                        <option value={"Stage3"}>Stage 3</option>  
-                    </select>
-                    <label className="peer-focus:font-medium absolute text-sm text-gray-600 duration-300 transform -translate-y-6 scale-75 top-3 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-85 peer-focus:-translate-y-6 ml-2 px-4 peer-placeholder-shown:-z-10 peer-focus:z-20 rounded-lg bg-white">Stage</label>
+                <div className="mt-5">
+                    <Select items={stageServer} label="Stages" getValue={(value)=>{setCurrentStage(value);}}/> 
                 </div>
-                <div className="relative z-0 mt-6 group border-none m-2">
-                    <select onChange={(e)=>{setCurrentCategory(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
-                        <option value={"Beginner"}>Beginner</option>
-                        <option value={"Advance"}>Advance</option>
-                        <option value={"19 below"}>19 Below</option>
-                        <option value={"20-29"}>20 - 29</option>
-                        <option value={"30-39"}>30 - 39</option> 
-                        <option value={"40 up"}>40 up</option>
-                        <option value={"Executive"}>Executive</option>
-                        <option value={"Ladies"}>Ladies</option>
-                    </select>
-                    <label className="peer-focus:font-medium absolute text-sm text-gray-600 duration-300 transform -translate-y-6 scale-75 top-3 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-85 peer-focus:-translate-y-6 ml-2 px-4 peer-placeholder-shown:-z-10 peer-focus:z-20 rounded-lg bg-white">Category</label>
+                <div className="mt-5">
+                    <Select items={categoryServer} label="Category" getValue={value=>setCurrentCategory(value)}/>
                 </div>
-                <div className="mx-2 relative overflow-y-auto h-[70vh]">
+                {/* <div className="mx-2 relative overflow-y-auto h-[70vh]">
                     {filterCategory(currentCategory)?.map((item,index)=>{
                         return(
                             <div key={index} className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through w-full shadow-md text-red-500 font-bold" : "no-underline w-full font-medium shadow-md"}>
@@ -207,16 +202,16 @@ const MainPage = ()=>{
                             </div>
                         );
                     })}
-                </div>
+                </div> */}
             </div>}
             <div>
             </div>  
         </div>
         <div className="bottom-0 fixed bg-white w-full h-[60px] grid grid-cols-10">
-            <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setisVisible(!isVisible)}><Category/><div>Category</div></button>
+            <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showCategory:true})}><Category/><div>Category</div></button>
             <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showAddRider:true})}><AddUser/><div>Rider</div></button>
             <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}><Trophy/><div>Result</div></button>
-            <button className="col-span-2 flex justify-center items-center flex-col text-xs"><Stage/><div>Stage</div></button>
+            <button className="col-span-2 flex justify-center items-center flex-col text-xs"  onClick={()=>setShowModal({...showModal, showStages:true})}><Stage/><div>Stage</div></button>
             <button className="col-span-2 flex justify-center items-center flex-col text-xs"><Setting/><div>Setting</div></button>
         </div>
     </>);

@@ -2,11 +2,12 @@ import {useState,useMemo,useRef} from "react";
 import { TotalTime,AddMutipleRiderFinished } from "../../data/stagesController"; 
 import NumberToTime from "../../components/NumberToTime";
 import { utils, writeFile,read } from "xlsx";
-import { Edit } from "../../components/Icons/Icons";
+import { Edit,Close } from "../../components/Icons/Icons";
 import Modal from "../../components/Modal/Modal"; 
+import Select from "../../UI/Select";
 const ResultModal = (props)=>{
 
-    const {ridersTest,stagesFinished} = props;
+    const {ridersTest,stagesFinished,categoryServer,stageServer} = props;
     const [currentCategory,setCurrentCategory] = useState("Beginner"); 
     const [summary, setSumamry] = useState(false);
     const riderDetails = useRef({
@@ -15,8 +16,7 @@ const ResultModal = (props)=>{
         number:null
     });
     console.time("filter array");
-    const filteringCagtegory = useMemo(() => TotalTime(ridersTest,stagesFinished,currentCategory), [currentCategory]); 
-    console.log(filteringCagtegory);
+    const filteringCagtegory = useMemo(() => TotalTime(ridersTest,stagesFinished,currentCategory,stageServer), [currentCategory]);  
     console.timeEnd("filter array");
     
     const handleExport = () => {
@@ -106,6 +106,17 @@ const ResultModal = (props)=>{
             alert("error");
         }
     };
+
+    const compareStages = (item)=>{
+        let temp = item;
+        console.log(stageServer);
+        // let test = stageServer.map((server) =>{ 
+        //     return item?.stages.filter(result => server.name == result.stage);
+        // });
+        const uniqueValues = new Set([...temp.stages].filter(x => !stageServer.has(x.stage)));
+        console.log(uniqueValues);
+    };
+
     return(<> 
         {
             summary && <div>
@@ -139,44 +150,36 @@ const ResultModal = (props)=>{
                 </div>
             </div>
         }
-        <div className="overflow-y-auto h-[90vh]"> 
-            <div className="flex flex-row-reverse gap-2 mr-2 mt-2"> 
-                <button className="cursor-pointer p-2 border rounded-md bg-white shadow-md bg-red-500 text-white" onClick={props.closeModal}>Close</button>
-                <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-slate-500 text-white" onClick={handleExport}>Export</button>
+        <div className="border-b flex justify-between items-center">
+            <div className="py-2 ml-4 font-bold ">
+                Results
+            </div>
+            <div className="pr-4 pt-2">
+                <button  onClick={props.closeModal}><Close/></button>
+            </div>
+        </div>
+        <div className="overflow-y-auto h-[86vh]"> 
+            <div className="flex flex-row-reverse gap-2 mr-2 mt-2">  
+                <button className="border rounded-md bg-white shadow-md cursor-pointer bg-slate-500 text-white text-xs px-2 py-1" onClick={handleExport}>Export</button>
                 <div>
                     <input type="file" name="file" className="custom-file-input hidden" id="inputGroupFile" required onChange={handleImport}
                         accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/> 
                     <label className="custom-file-label" htmlFor="inputGroupFile">
-                        <div className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-orange-400 text-white">
+                        <div className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-orange-400 text-white text-xs">
                             Import
                         </div>
                     </label>
                 </div>
-                <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white" onClick={handlerResult}>Results</button>
+                <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white text-xs" onClick={handlerResult}>Results</button>
             </div>
-            <div className="relative z-0 mt-6 group border-none m-2">
-                <select onChange={(e)=>{setCurrentCategory(e.target.value);}} className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  border-ssr-blue2 border-[1.9px] appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
-                    <option value={"Beginner"}>Beginner</option>
-                    <option value={"Advance"}>Advance</option>
-                    <option value={"19 below"}>19 Below</option>
-                    <option value={"20-29"}>20 - 29</option>
-                    <option value={"30-39"}>30 - 39</option> 
-                    <option value={"40 up"}>40 up</option>
-                    <option value={"Executive"}>Executive</option>
-                    <option value={"Ladies"}>Ladies</option>
-                </select>
-                <label className="peer-focus:font-medium absolute text-sm text-gray-600 duration-300 transform -translate-y-6 scale-75 top-3 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-85 peer-focus:-translate-y-6 ml-2 px-4 peer-placeholder-shown:-z-10 peer-focus:z-20 rounded-lg bg-white">Category</label>
+            <div className="m-2">
+                <Select items={categoryServer} label="Category" getValue={(value)=>{setCurrentCategory(value);}}/> 
             </div> 
-            <div className="m-2 text-[8px] md:text-base"> 
-                {/* <div className="grid grid-cols-8 border">
-                    <div>Rank</div>
-                    <div>Number</div>
-                    <div className="col-span-2">Name</div>
-                    <div>Stage 1</div> 
-                    <div>Stage 2</div> 
-                    <div>Total Time</div>
-                </div> */}
-                {
+            <div className="flex justify-center items-center">
+                {filteringCagtegory.length == 0 && <div>No riders on this category.</div> }
+            </div>
+            <div className="m-2 text-[8px] md:text-base">  
+                { 
                     filteringCagtegory?.map((item,index)=>{
                         return (
                             <div className="relative py-1" key={index}>   
@@ -189,13 +192,21 @@ const ResultModal = (props)=>{
                                     </div> 
                                     <div className="w-full">
                                         <div className="text-xs">#{item.id} {item.name}</div> 
-                                        <div className="grid grid-cols-4 pt-1">   
-                                            <div><div className="text-[.6rem]">Stage 1</div> {<NumberToTime stages={item?.stages} desc="Stage1"/>}</div> 
+                                        <div className="grid grid-cols-4 pt-1 gap-3">   
+                                            {
+                                                item?.stages.map((stage,index)=>{
+                                                    return(
+                                                        <div key={index}><div className="text-[.6rem]">{stage.stage}</div> {<NumberToTime stages={stage}/>}</div>
+                                                    ); 
+                                                })
+                                            }
+                                            {/* <div><div className="text-[.6rem]">Stage 1</div> {<NumberToTime stages={item?.stages} desc="Stage1"/>}</div> 
                                             <div><div className="text-[.6rem]">Stage 2</div> {<NumberToTime stages={item?.stages} desc="Stage2"/>}</div> 
-                                            <div><div className="text-[.6rem]">Stage 3</div> {<NumberToTime stages={item?.stages} desc="Stage3"/>}</div> 
-                                            <div><div className="text-[.6rem]">Total Time</div>{<NumberToTime stages={[{"time":item.totalAll, "totalTime":"FINISHED"}]} desc="totalTime"/>}</div> 
+                                            <div><div className="text-[.6rem]">Stage 3</div> {<NumberToTime stages={item?.stages} desc="Stage3"/>}</div>  */}
+                                            <div><div className="text-[.6rem]">Total Time</div>{<NumberToTime stages={{"time":item.totalAll}} desc="totalTime"/>}</div> 
                                         </div>
                                     </div> 
+                                    <button onClick={()=>compareStages(item)}>Test button</button>
                                     <div className="cursor-pointer mr-1 items-center" onClick={async()=>{ 
                                         riderDetails.current.name = item.name; 
                                         riderDetails.current.stages = item?.stages;
@@ -204,22 +215,6 @@ const ResultModal = (props)=>{
                                         <span><Edit/></span></div>
                                 </div>  
                             </div>
-                            // <div key={index} className="grid grid-cols-8 border ">
-                            //     <div>{index+1}</div>
-                            //     <div>{item.id}</div>
-                            //     <div className="col-span-2">{item.name}</div>
-                            //     <div>{<NumberToTime stages={item?.stages} desc="Stage1"/>}</div> 
-                            //     <div>{<NumberToTime stages={item?.stages} desc="Stage2"/>}</div> 
-                            //     {/* <div>{<NumberToTime stages={item?.stages} desc="Stage3"/>}</div>    */}
-                            //     <div className="cursor-pointer ml-1 flex gap-1 items-center" onClick={async()=>{ 
-                            //         riderDetails.current.name = item.name; 
-                            //         riderDetails.current.stages = item?.stages;
-                            //         riderDetails.current.number = item.id;
-                            //         setSumamry(true); }}>
-                            //         <div>{<NumberToTime stages={[{"time":item.totalAll, "totalTime":"FINISHED"}]} desc="totalTime"/>}</div> 
-                            //         <span><Edit/></span></div>
-                            // </div>
-                        
                         );
                     })
                 }

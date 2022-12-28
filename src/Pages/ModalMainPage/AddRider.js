@@ -6,7 +6,7 @@ import { AddMutipleRider } from "../../data/ridersController";
 import { useRef,useState } from "react";
 const AddRider = ({riders,closeModal,showToast, categoryServer}) =>{
     const [groupRider,setGroupRider] = useState([]);
-    const category = useRef(categoryServer[0].name);
+    const category = useRef(categoryServer[0]);
     const name = useRef(""); 
     const plateNumber = useRef("");
     const userInfo = useRef({
@@ -37,7 +37,7 @@ const AddRider = ({riders,closeModal,showToast, categoryServer}) =>{
         </div>
         <div className="m-auto md:w-[80%] sm:w-[100%] xs:w-[100%] lg:w-[80%] mt-3">   
             <div className="mb-3">
-                <Select items={categoryServer} label="Category" getValue={(value)=>{category.current = value;}}/>
+                <Select items={categoryServer} label="Category" getValue={(value)=>{category.current = JSON.parse(value);}}/>
             </div>  
             <div className="grid grid-cols-8 items-center">
                 <div className="col-span-3">
@@ -56,7 +56,7 @@ const AddRider = ({riders,closeModal,showToast, categoryServer}) =>{
                         if(duplicate || duplicateServer)
                             alert("Try another number"); 
                         else{
-                            setGroupRider(()=>[...groupRider,Object.assign(dataRider,{category:category.current})]);  
+                            setGroupRider(()=>[...groupRider,Object.assign(dataRider,{category:category.current.name})]);  
                             plateNumber.current.value = "";
                             name.current.value = "";
                         }

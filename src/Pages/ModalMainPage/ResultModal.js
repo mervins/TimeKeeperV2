@@ -16,7 +16,7 @@ const ResultModal = (props)=>{
         number:null
     });
     console.time("filter array");
-    const filteringCagtegory = useMemo(() => TotalTime(ridersTest,stagesFinished,currentCategory,stageServer), [currentCategory]);  
+    const filteringCagtegory = useMemo(() => TotalTime(ridersTest,stagesFinished,currentCategory.name,stageServer), [currentCategory.name]);  
     console.timeEnd("filter array");
     
     const handleExport = () => {
@@ -107,16 +107,6 @@ const ResultModal = (props)=>{
         }
     };
 
-    const compareStages = (item)=>{
-        let temp = item;
-        console.log(stageServer);
-        // let test = stageServer.map((server) =>{ 
-        //     return item?.stages.filter(result => server.name == result.stage);
-        // });
-        const uniqueValues = new Set([...temp.stages].filter(x => !stageServer.has(x.stage)));
-        console.log(uniqueValues);
-    };
-
     return(<> 
         {
             summary && <div>
@@ -173,7 +163,7 @@ const ResultModal = (props)=>{
                 <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white text-xs" onClick={handlerResult}>Results</button>
             </div>
             <div className="m-2">
-                <Select items={categoryServer} label="Category" getValue={(value)=>{setCurrentCategory(value);}}/> 
+                <Select items={categoryServer} label="Category" getValue={(value)=>{setCurrentCategory(JSON.parse(value));}}/> 
             </div> 
             <div className="flex justify-center items-center">
                 {filteringCagtegory.length == 0 && <div>No riders on this category.</div> }
@@ -196,17 +186,13 @@ const ResultModal = (props)=>{
                                             {
                                                 item?.stages.map((stage,index)=>{
                                                     return(
-                                                        <div key={index}><div className="text-[.6rem]">{stage.stage}</div> {<NumberToTime stages={stage}/>}</div>
+                                                        <div key={index}><div className="text-[.6rem] col-span-2">{stage.stage}</div> {<NumberToTime stages={stage}/>}</div>
                                                     ); 
                                                 })
                                             }
-                                            {/* <div><div className="text-[.6rem]">Stage 1</div> {<NumberToTime stages={item?.stages} desc="Stage1"/>}</div> 
-                                            <div><div className="text-[.6rem]">Stage 2</div> {<NumberToTime stages={item?.stages} desc="Stage2"/>}</div> 
-                                            <div><div className="text-[.6rem]">Stage 3</div> {<NumberToTime stages={item?.stages} desc="Stage3"/>}</div>  */}
                                             <div><div className="text-[.6rem]">Total Time</div>{<NumberToTime stages={{"time":item.totalAll}} desc="totalTime"/>}</div> 
                                         </div>
-                                    </div> 
-                                    <button onClick={()=>compareStages(item)}>Test button</button>
+                                    </div>  
                                     <div className="cursor-pointer mr-1 items-center" onClick={async()=>{ 
                                         riderDetails.current.name = item.name; 
                                         riderDetails.current.stages = item?.stages;

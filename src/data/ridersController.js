@@ -24,6 +24,7 @@ export const AddMutipleRider = async (rows) => {
 };
 
 export const UpdateRider = async(details, status,stage) => {
+    console.log(stage);
     let updateStatus = await UpdateStingObjectStatus(details,status,stage);
     console.log({...details, status:updateStatus});
     await db.riders.put({...details, status:updateStatus});

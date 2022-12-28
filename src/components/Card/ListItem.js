@@ -49,7 +49,7 @@ const ListItem = (props)=>{
 
     const playHandle = ()=>{
         startTime.current = Date.now();
-        UpdateRider(props.item,StatusRider.RUNNING,stage);
+        UpdateRider(props.item,StatusRider.RUNNING,stage.name);
         setRunning(true); 
         setGetStartTime(getOnTime);
         buttonsDisplay.current.start = false;
@@ -58,7 +58,7 @@ const ListItem = (props)=>{
     };
     const stopHandler = ()=>{
         setRunning(false); 
-        UpdateRider(props.item,StatusRider.TOUCHDOWN,stage);
+        UpdateRider(props.item,StatusRider.TOUCHDOWN,stage.name);
         setFinishedTime(getOnTime);
         buttonsDisplay.current.end = false;  
         buttonsDisplay.current.save = true;  
@@ -66,8 +66,8 @@ const ListItem = (props)=>{
     const rerunHandler = ()=>{ 
         setShowMessage(true); 
     };
-    const confirmReRun = () =>{
-        UpdateRider(props.item,StatusRider.RERUN,stage);
+    const confirmReRun = () =>{ 
+        UpdateRider(props.item,StatusRider.RERUN,stage.name);
         setTotalTime(0); 
         setGetStartTime("00:00:00:00");
         setFinishedTime("00:00:00:00");
@@ -76,8 +76,8 @@ const ListItem = (props)=>{
         setShowMessage(false); 
     };
     const saveHandler =() =>{
-        UpdateRider(props.item,StatusRider.FINISHED,stage);
-        AddIndividualRiderFinished({rider_id: number, stage:stage, startTime:getStartTime, finishedTime:finishedTime, totalTime:totalTime});
+        UpdateRider(props.item,StatusRider.FINISHED,stage.name);
+        AddIndividualRiderFinished({rider_id: number, stage:stage.name,stage_id:stage.id, startTime:getStartTime, finishedTime:finishedTime, totalTime:totalTime});
         setTotalTime(0); 
         setGetStartTime("00:00:00:00");
         setFinishedTime("00:00:00:00");

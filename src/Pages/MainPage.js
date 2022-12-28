@@ -1,6 +1,6 @@
 import { useState,useEffect,useRef } from "react";
 import ListItem from "../components/Card/ListItem";
-import { Close,Menu, AddUser,Setting, Category,Stage,Trophy} from "../components/Icons/Icons"; 
+import { Close,Menu, AddUser,Setting, Category,Stage,Trophy, Trash} from "../components/Icons/Icons"; 
 import { StatusRider } from "../data/DummyData";
 import Riders, { UpdateRider,DeleteRider,DeleteAllRiders } from "../data/ridersController";
 import Stages, {DeleteAllStages} from "../data/stagesController";
@@ -11,7 +11,7 @@ import Toast from "../components/Toast/Toast";
 import {toastProperties} from "../components/Toast/Toast";
 import { useMediaQuery } from "../Hooks/useMediaQuery"; 
 import RerunMessage from "./ModalMainPage/RerunMessage";
-// import { ButtonIcon } from "../components/Button";
+import { ButtonIcon } from "../components/Button";
 import AddRider from "./ModalMainPage/AddRider";
 import Mobile from "./Device/Mobile"; 
 import Select from "../UI/Select";
@@ -55,14 +55,14 @@ const MainPage = ()=>{
 
     useEffect(() => {
         if (typeof categoryServer != "undefined") { 
-            setCurrentCategory(categoryServer[0]?.name);
+            setCurrentCategory(categoryServer[0]);
             console.log(categoryServer);
         }
     }, [categoryServer]);
     
     useEffect(() => {
         if (typeof stageServer != "undefined") { 
-            setCurrentStage(stageServer[0]?.name);
+            setCurrentStage(stageServer[0]);
             console.log(stageServer);
         }
     }, [stageServer]);
@@ -73,12 +73,12 @@ const MainPage = ()=>{
         setListToast([...listToast]);
     };
 
-    const addRunner = (details,status)=>{ 
-        UpdateRider(details, status,currentStage);
+    const addRunner = (details,status,stage)=>{ 
+        UpdateRider(details, status,stage);
     };
 
     const removeRunner = async(details,status)=>{  
-        UpdateRider(details, status,currentStage);  
+        UpdateRider(details, status,currentStage?.name);  
     };
 
     const removeRider = () => {
@@ -88,11 +88,11 @@ const MainPage = ()=>{
     };
  
     const filterCategory = (category) =>{ 
-        return ridersTest?.filter(item => item.category === category);
+        return ridersTest?.filter(item => item.category === category.name);
     };
     
     const jsonParserStatus = (stages,status) =>{
-        let getStage = stages.filter(stage => stage.stage == currentStage); 
+        let getStage = stages.filter(stage => stage.stage == currentStage?.name); 
         return getStage[0]?.status != status; 
     };
     
@@ -119,14 +119,16 @@ const MainPage = ()=>{
         );
     }        
     );
+    let getStatusStage = (stages)=>{ 
+        let stage = stages.filter(stage=> stage.stage == currentStage.name);  
+        return stage[0]?.status;
+    };
 
     return (<> 
-        <Mobile currentCategory={currentCategory} currentStage={currentStage} jsonParserStatus={jsonParserStatus}
-            setShowModal={setShowModal} setCurrentStage={setCurrentStage} addRunner={addRunner}
-            setCurrentCategory={setCurrentCategory} DeleteAllTables={DeleteAllTables} filterCategory={filterCategory}
+        <Mobile currentCategory={currentCategory} currentStage={currentStage} setCurrentCategory={setCurrentCategory} setCurrentStage={setCurrentStage} setShowModal={setShowModal} ridersTest={ridersTest} addRunner={addRunner} DeleteAllTables={DeleteAllTables}
             StatusRider={StatusRider} idRider={idRider} showModal={showModal} stageServer={stageServer} categoryServer={categoryServer}></Mobile> 
         <div className="relative h-[95vh] flex w-full mt-1">   
-            {!isPageWide &&<div onClick={()=>{setShowModal({...showModal, showNavBar:true});setCurrentCategory(categoryServer[0].name); setCurrentStage(stageServer[0].name);}} 
+            {!isPageWide &&<div onClick={()=>{setShowModal({...showModal, showNavBar:true});}} 
                 className="absolute left-2 -top-9"><Menu/></div>}
             {listItem}  
             {showModal.showImport && <Modal>
@@ -149,10 +151,12 @@ const MainPage = ()=>{
                 <StagesPage riders={ridersTest} showToast={showToast} closeModal={()=>setShowModal({...showModal, showStages:false})}/>
             </Modal>}
 
-            <div className="border grow p-2 overflow-y-auto h-[95vh] bg-[#E4E9F2]">
-                <div className="flex rounded-md px-1 pt-1 justify-between font-bold border">
-                    <div>Cat: {currentCategory}</div> 
-                    <div>{currentStage}</div>
+            <div className="border grow p-1 overflow-y-auto h-[95vh] bg-[#E4E9F2]">
+                <div className="grid grid-cols-8 rounded-md px-1 pt-1 font-bold border"> 
+                    <div className="bg-white col-span-4 rounded-lg">
+                        <Select items={categoryServer} label="Category" getValue={(value)=>{setCurrentCategory(JSON.parse(value));}}/> </div>
+                    <div className="bg-white col-span-4 rounded-lg">
+                        <Select items={stageServer} label="Stages" getValue={(value)=>{setCurrentStage(JSON.parse(value));}}/> </div>
                 </div>
                 <div>  
                 </div>
@@ -177,19 +181,19 @@ const MainPage = ()=>{
                     <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-orange-400 text-white" onClick={()=>setShowModal({...showModal, showImport:true})}>IMPORT</button>   
                     <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-red-500 text-white" onClick={()=>DeleteAllTables()}>CLEAR</button>
                 </div>
-                <div className="mt-5">
-                    <Select items={stageServer} label="Stages" getValue={(value)=>{setCurrentStage(value);}}/> 
+                <div className="mt-5 font-bold">
+                    <Select items={stageServer} label="Stages" getValue={(value)=>{setCurrentStage(JSON.parse(value));}} currentSelect={currentStage}/> 
                 </div>
-                <div className="mt-5">
-                    <Select items={categoryServer} label="Category" getValue={value=>setCurrentCategory(value)}/>
+                <div className="mt-5 font-bold">
+                    <Select items={categoryServer} label="Category" getValue={value=>setCurrentCategory(JSON.parse(value))} currentSelect={currentCategory}/>
                 </div>
-                {/* <div className="mx-2 relative overflow-y-auto h-[70vh]">
+                <div className="mx-2 relative overflow-y-auto h-[70vh]">
                     {filterCategory(currentCategory)?.map((item,index)=>{
                         return(
                             <div key={index} className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through w-full shadow-md text-red-500 font-bold" : "no-underline w-full font-medium shadow-md"}>
                                 <div className="grid grid-cols-8 gap-4 border py-1 mb-1 px-1 rounded-md">
                                     <div className="col-span-5 ml-3"> 
-                                        <div className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through text-red-500 font-bold" : "no-underline font-bold"}>#{item.number} {JSON.parse(item.status)[currentStage]}</div>
+                                        <div className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through text-red-500 font-bold" : "no-underline font-bold"}>#{item.number} {getStatusStage(item.status)}</div>
                                         <div className="text-xs">{item.name}</div>
                                     </div>
                                     <button className="cursor-pointer" onClick={()=>addRunner(item , StatusRider.ONBOARD)} disabled={jsonParserStatus(item.status,StatusRider.WAITING)}>
@@ -202,7 +206,7 @@ const MainPage = ()=>{
                             </div>
                         );
                     })}
-                </div> */}
+                </div>
             </div>}
             <div>
             </div>  

@@ -1,12 +1,12 @@
 import React from "react"; 
-const Select = ({items,label,getValue})=>{ 
+const Select = ({items,label,getValue,currentSelect})=>{ 
     return (
         <>
             <div className="relative z-0 group border-none m-1">   
-                <select onChange={(e)=>{getValue(e.target.value);}}
+                <select onChange={(e)=>{getValue(e.target.value);}} value={JSON.stringify(currentSelect)}
                     className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent  focus:border-blue-600 border  appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed">
                     {items?.map((item,index)=>{
-                        return(<option key={index} value={item.name}>{item.name}</option>);
+                        return(<option key={index} value={JSON.stringify(item)}>{item.name}</option>);
                     })} 
                 </select>
                 <label className="peer-focus:font-medium absolute text-sm text-gray-600 duration-300 

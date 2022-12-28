@@ -1,7 +1,8 @@
 import { ButtonIcon } from "../../components/Button";
 import {  Close, AddUser,Trash } from "../../components/Icons/Icons"; 
-import { motion,AnimatePresence  } from "framer-motion";
+import { motion,AnimatePresence  } from "framer-motion"; 
 import Select from "../../UI/Select"; 
+import Riders from "../../data/ridersController";
 
 const backdrop = {
     visible:{opacity:1},
@@ -36,15 +37,35 @@ const childVariants = {
         }
     }
 };
-const Mobile = ({currentCategory,currentStage,jsonParserStatus,setShowModal,setCurrentStage,addRunner,
-    setCurrentCategory,filterCategory,StatusRider,idRider,showModal,stageServer,categoryServer})=>{   
-
+const Mobile = ({currentCategory,setCurrentCategory,setCurrentStage,currentStage,setShowModal,addRunner, StatusRider,idRider,showModal,stageServer,categoryServer})=>{   
+    
+    let ridersTest = Riders();
 
     let getStatusStage = (stages)=>{ 
-        console.log(stages);
-        let stage = stages.filter(stage=> stage.stage == currentStage);
-        return stage[0].status;
+        let stage = stages.filter(stage=> stage.stage == currentStage.name);  
+        return stage[0]?.status;
     };
+    // useEffect(() => {
+    //     if (typeof categoryServer != "undefined") { 
+    //         setCurrentCategory(categoryServer[0]);  
+    //     }
+    // }, [categoryServer]);
+    
+    // useEffect(() => {
+    //     if (typeof stageServer != "undefined") { 
+    //         setCurrentStage(stageServer[0]); 
+    //     }
+    // }, [stageServer]);
+
+    const jsonParserStatus = (stages,status) =>{ 
+        let getStage = stages.filter(stage => stage.stage == currentStage.name);  
+        return getStage[0]?.status != status; 
+    };
+
+    const filterCategory = (category) =>{ 
+        return ridersTest?.filter(item => item.category === category);
+    };
+    
     return(
         <AnimatePresence>
             {showModal.showNavBar && (
@@ -59,13 +80,13 @@ const Mobile = ({currentCategory,currentStage,jsonParserStatus,setShowModal,setC
                             <center className="mt-2 font-bold text-lg">Tie-Mer</center>
                             <motion.button variants={childVariants} exit ="hidden" initial="hidden" animate="visible" className="absolute z-20 top-0 -right-1 rounded-full p-3 text-black cursor-pointer" onClick={()=>{setShowModal({...showModal, showNavBar:false});}}> <Close/></motion.button>
                             <motion.div className="mt-5" variants={childVariants}>
-                                <Select items={stageServer} label="Stages" getValue={(value)=>{setCurrentStage(value);}}/> 
+                                <Select items={stageServer} label="Stages" getValue={(value)=>{setCurrentStage(JSON.parse(value));}} currentSelect={currentStage}/> 
                             </motion.div>
                             <motion.div className="mt-5" variants={childVariants}>
-                                <Select items={categoryServer} label="Category" getValue={value=>setCurrentCategory(value)}/>
+                                <Select items={categoryServer} label="Category" getValue={value=>setCurrentCategory(JSON.parse(value))} currentSelect={currentCategory}/>
                             </motion.div>
                             <motion.div variants={childVariants}  className="mx-2 relative overflow-y-auto h-[75vh]">
-                                {currentCategory ? filterCategory(currentCategory)?.map((item,index)=>{
+                                {currentCategory?.name ? filterCategory(currentCategory?.name)?.map((item,index)=>{
                                     return(
                                         <div key={index} className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through w-full shadow-md text-red-500 font-bold" : "no-underline w-full font-medium shadow-md"}>
                                             <div className="grid grid-cols-8 gap-2 border py-1 mb-1 px-1 rounded-md justify-center items-center">
@@ -74,7 +95,7 @@ const Mobile = ({currentCategory,currentStage,jsonParserStatus,setShowModal,setC
                                                     #{item.number} {getStatusStage(item.status)}</div>
                                                     <div className="text-xs">Name: {item.name}</div>
                                                 </div>
-                                                <button className="cursor-pointer" onClick={()=>addRunner(item , StatusRider.ONBOARD)} 
+                                                <button className="cursor-pointer" onClick={()=>addRunner(item , StatusRider.ONBOARD,currentStage.name)} 
                                                     disabled={jsonParserStatus(item.status,StatusRider.WAITING)}>
                                                     <ButtonIcon title="Start" Icon={<AddUser/>}></ButtonIcon>
                                                 </button> 

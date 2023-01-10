@@ -6,18 +6,21 @@ import Riders from "../../data/ridersController";
 
 const backdrop = {
     visible:{opacity:1},
-    hidden:{opacity:0,transition:{ delay: 0.2, duration: 0.2}}
+    hidden:{opacity:0,
+        transition:{ delay: 0.4, duration: 0.4}
+    }
 };
 
 const modal = {
     hidden:{
-        width:"0", 
-        transition:{ delay: 0.2, duration: 0.2 }
+        x:"-95vw", 
+        transition:{duration: 0.4}
     },
     visible:{ 
-        width:"90vw",
-        transition:{delay:0.1, 
-            duration:0.1,}
+        x:"0",
+        transition:{
+            delay: 0.1,
+            duration:0.4,}
     }
 };
 
@@ -37,7 +40,7 @@ const childVariants = {
         }
     }
 };
-const Mobile = ({currentCategory,setCurrentCategory,setCurrentStage,currentStage,setShowModal,addRunner, StatusRider,idRider,showModal,stageServer,categoryServer})=>{   
+const Mobile = ({currentCategory,setCurrentCategory,setCurrentStage,currentStage,setShowModal,addRunner, StatusRider,idRider,showModal,stageServer,categoryServer})=>{    
     
     let ridersTest = Riders();
 
@@ -45,17 +48,6 @@ const Mobile = ({currentCategory,setCurrentCategory,setCurrentStage,currentStage
         let stage = stages.filter(stage=> stage.stage == currentStage.name);  
         return stage[0]?.status;
     };
-    // useEffect(() => {
-    //     if (typeof categoryServer != "undefined") { 
-    //         setCurrentCategory(categoryServer[0]);  
-    //     }
-    // }, [categoryServer]);
-    
-    // useEffect(() => {
-    //     if (typeof stageServer != "undefined") { 
-    //         setCurrentStage(stageServer[0]); 
-    //     }
-    // }, [stageServer]);
 
     const jsonParserStatus = (stages,status) =>{ 
         let getStage = stages.filter(stage => stage.stage == currentStage.name);  
@@ -75,17 +67,17 @@ const Mobile = ({currentCategory,setCurrentCategory,setCurrentStage,currentStage
                     animate="visible"
                     exit ="hidden"
                 >
-                    <motion.div variants={modal} className="z-40 bg-whit border h-[100vh] bg-white relative rounded"> 
+                    <motion.div variants={modal} className="z-40 border h-[100vh] bg-white relative rounded w-4/5"> 
                         <motion.div variants={childVariants}>
                             <center className="mt-2 font-bold text-lg">Tie-Mer</center>
-                            <motion.button variants={childVariants} exit ="hidden" initial="hidden" animate="visible" className="absolute z-20 top-0 -right-1 rounded-full p-3 text-black cursor-pointer" onClick={()=>{setShowModal({...showModal, showNavBar:false});}}> <Close/></motion.button>
-                            <motion.div className="mt-5" variants={childVariants}>
+                            <button className="absolute z-20 top-0 -right-1 rounded-full p-3 text-black cursor-pointer" onClick={()=>{setShowModal({...showModal, showNavBar:false});}}> <Close/></button>
+                            <div className="mt-5">
                                 <Select items={stageServer} label="Stages" getValue={(value)=>{setCurrentStage(JSON.parse(value));}} currentSelect={currentStage}/> 
-                            </motion.div>
-                            <motion.div className="mt-5" variants={childVariants}>
+                            </div>
+                            <div className="mt-5">
                                 <Select items={categoryServer} label="Category" getValue={value=>setCurrentCategory(JSON.parse(value))} currentSelect={currentCategory}/>
-                            </motion.div>
-                            <motion.div variants={childVariants}  className="mx-2 relative overflow-y-auto h-[75vh]">
+                            </div>
+                            <div  className="mx-2 relative overflow-y-auto h-[75vh]">
                                 {currentCategory?.name ? filterCategory(currentCategory?.name)?.map((item,index)=>{
                                     return(
                                         <div key={index} className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through w-full shadow-md text-red-500 font-bold" : "no-underline w-full font-medium shadow-md"}>
@@ -106,7 +98,7 @@ const Mobile = ({currentCategory,setCurrentCategory,setCurrentStage,currentStage
                                         </div>
                                     );
                                 }) : <div>Loading</div>}
-                            </motion.div>
+                            </div>
                         </motion.div>
                     </motion.div>
                 </motion.div>

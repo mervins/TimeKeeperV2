@@ -1,22 +1,51 @@
-import {useState,useMemo,useRef} from "react";
+import React, {useState,useMemo,useRef} from "react";
 import { TotalTime,AddMutipleRiderFinished } from "../../data/stagesController"; 
 import NumberToTime from "../../components/NumberToTime";
 import { utils, writeFile,read } from "xlsx";
-import { Edit,Close } from "../../components/Icons/Icons";
+import { Close } from "../../components/Icons/Icons";
 import Modal from "../../components/Modal/Modal"; 
 import Select from "../../UI/Select";
-const ResultModal = (props)=>{
+import CategoryContrller from "../../data/categoryController";
+import { GetStage } from "../../data/stageController";
+import TableContainer from "../../components/Table/TableContainer";
+import Table from "../../components/Table/Table";
+import TableBody from "../../components/Table/TableBody";
+import TableHead from "../../components/Table/TableHead";
+import TableCell from "../../components/Table/TableCell";
 
-    const {ridersTest,stagesFinished,categoryServer,stageServer} = props;
-    const [currentCategory,setCurrentCategory] = useState("Beginner"); 
+const ResultModal = (props)=>{
+    
+    let categoryServer = CategoryContrller();
+    const {ridersParticipants,stagesFinished,stageServer} = props;
+    const [currentCategory,setCurrentCategory] = useState(null); 
     const [summary, setSumamry] = useState(false);
+    const [currentStage,setCurrentStage] = useState(null); 
+    const [catDetails,setCatDetails] = useState(null); 
     const riderDetails = useRef({
         name:"",
         stages:[],
         number:null
     });
+    const header = ["Top","Race #","Name","Category"];
+    React.useEffect(() => {
+        if (typeof categoryServer != "undefined") { 
+            setCurrentCategory(categoryServer[0]?.id);
+            setCatDetails(categoryServer[0]);
+        }
+    }, [categoryServer]);
+
+    React.useEffect(() => {
+        if (typeof stageServer != "undefined") { 
+            setCurrentStage(stageServer[0]?.id);
+            console.log(stageServer);
+        }
+    }, [stageServer]);
+
     console.time("filter array");
-    const filteringCagtegory = useMemo(() => TotalTime(ridersTest,stagesFinished,currentCategory.name,stageServer), [currentCategory.name]);  
+    const filteringCagtegory = useMemo(() => currentCategory ? 
+        TotalTime(ridersParticipants,stagesFinished,currentCategory,stageServer,currentStage) 
+        : [],
+    [currentCategory,currentStage]);  
     console.timeEnd("filter array");
     
     const handleExport = () => {
@@ -56,7 +85,7 @@ const ResultModal = (props)=>{
         const wb = utils.book_new();
         let cat = ["19 below","20-29","30-39","40 up","Executive","Ladies"]; 
         let check = cat.map((item,index)=>{
-            let arrangeExportData = TotalTime(ridersTest,stagesFinished,item).map((count,index) => Object.assign(
+            let arrangeExportData = TotalTime(ridersParticipants,stagesFinished,item).map((count,index) => Object.assign(
                 {   Rank:index+1, 
                     Number:count.id, 
                     Name:count.name,
@@ -105,6 +134,12 @@ const ResultModal = (props)=>{
         }else{
             alert("error");
         }
+    };
+
+    let getStageList = async(id)=>{
+        let detailStage = await GetStage(parseInt(id));
+        setCurrentStage(id);
+        return detailStage;
     };
 
     return(<> 
@@ -162,48 +197,92 @@ const ResultModal = (props)=>{
                 </div>
                 <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white text-xs" onClick={handlerResult}>Results</button>
             </div>
-            <div className="m-2">
-                <Select items={categoryServer} label="Category" getValue={(value)=>{setCurrentCategory(JSON.parse(value));}}/> 
+            <div className="flex md:gap-4 gap-1 mt-2 md:px-6 px-1">
+                <div className="flex w-full">
+                    <Select items={categoryServer} label="Category" getValue={value=>{
+                        setCurrentCategory(value);
+                        let cat = categoryServer.find(cat => cat.id === parseInt(value));
+                        setCatDetails(cat);
+                    }} currentSelect={currentCategory}/> 
+                </div>
+                <div className="flex w-full">
+                    <Select items={stageServer} label="Ranking" getValue={(value)=>{getStageList(value);}} currentSelect={currentStage}/> 
+                </div>
             </div> 
             <div className="flex justify-center items-center">
-                {filteringCagtegory.length == 0 && <div>No riders on this category.</div> }
+                {(filteringCagtegory.length <= 0) && <div>No riders on this category.</div> }
             </div>
-            <div className="m-2 text-[8px] md:text-base">  
-                { 
-                    filteringCagtegory?.map((item,index)=>{
-                        return (
-                            <div className="relative py-1" key={index}>   
-                                <div className="border py-1 text-black font-bold shadow-md flex items-center rounded-lg gap-4">  
-                                    <div className="pl-1">
-                                        <div className="flex gap-1 items-center">
-                                            <div className="text-[.5rem]">Top</div>
-                                            <div className="text-xl text-yellow-500">{index+1}</div>
-                                        </div>
-                                    </div> 
-                                    <div className="w-full">
-                                        <div className="text-xs">#{item.id} {item.name}</div> 
-                                        <div className="grid grid-cols-4 pt-1 gap-3">   
-                                            {
-                                                item?.stages.map((stage,index)=>{
-                                                    return(
-                                                        <div key={index}><div className="text-[.6rem] col-span-2">{stage.stage}</div> {<NumberToTime stages={stage}/>}</div>
-                                                    ); 
-                                                })
-                                            }
-                                            <div><div className="text-[.6rem]">Total Time</div>{<NumberToTime stages={{"time":item.totalAll}} desc="totalTime"/>}</div> 
-                                        </div>
-                                    </div>  
-                                    <div className="cursor-pointer mr-1 items-center" onClick={async()=>{ 
-                                        riderDetails.current.name = item.name; 
-                                        riderDetails.current.stages = item?.stages;
-                                        riderDetails.current.number = item.id;
-                                        setSumamry(true); }}> 
-                                        <span><Edit/></span></div>
-                                </div>  
-                            </div>
-                        );
-                    })
-                }
+            <div className="m-2 text-[8px] md:text-base md:px-6 px-1">  
+                <div className='gap-2'>
+                    <TableContainer> 
+                        <Table>
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    {
+                                        header.map((header,key)=>{
+                                            return(
+                                                <TableHead key={key} className="text-center">
+                                                    {header}
+                                                </TableHead> 
+                                            );
+                                        })
+                                    }
+                                    {
+                                        stageServer.map((stage,key)=>{
+                                            return(
+                                                <TableHead key={key} className="text-center">
+                                                    {stage.name}
+                                                </TableHead> 
+                                            );
+                                        })
+                                    }
+                                </tr>
+                            </thead>
+                            <TableBody> 
+                                {
+                                    filteringCagtegory.map((result,key)=>{
+                                        return(
+                                            <tr className='hover:bg-gray-200' key={key}>
+                                                <TableCell className={`py-2 px-2 text-[16px] text-center  ${key < 11 ? "text-orange-400" : "text-black"}`}>
+                                                    {key+1}
+                                                </TableCell>  
+                                                <TableCell className="py-2 px-2 text-[12px] text-black text-center">
+                                                    {result.number}
+                                                </TableCell>  
+                                                <TableCell className="py-2 px-2 text-[12px] text-black text-center">
+                                                    {result.name}
+                                                </TableCell>  
+                                                <TableCell className="py-2 px-2 text-[12px] text-black text-center">
+                                                    {catDetails?.name || ""}
+                                                </TableCell> 
+                                                {
+                                                    stageServer.map((serverStg,ind)=>{
+                                                        return <TableCell key={ind} className="py-2 px-2 text-[12px] text-center">
+                                                            {
+                                                                result?.stages.map((stage,key)=>{
+                                                                    return(
+                                                                        <> 
+                                                                            {
+                                                                                serverStg.id === stage.stage_id &&
+                                                                                    <NumberToTime key={key} stages={stage}/>
+                                                                            }
+                                                                            
+                                                                        </>
+                                                                    );
+                                                                })
+                                                            }
+                                                        </TableCell>;
+                                                    })
+                                                }
+                                        
+                                            </tr> 
+                                        );
+                                    })
+                                }
+                            </TableBody>
+                        </Table>  
+                    </TableContainer>
+                </div>
             </div>
         </div>
     </>);

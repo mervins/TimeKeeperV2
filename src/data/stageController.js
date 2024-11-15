@@ -19,6 +19,9 @@ export const UpdateStage = async(Stage) => {
     await db.stageGroup.put({Stage:Stage});
 };
 
+export const GetStage = async(id) => {
+    return await db.stageGroup.where("id").equals(id).first();
+};
 
 export const DeleteAllStage = async() => {
     await db.stageGroup.clear();

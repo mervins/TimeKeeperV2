@@ -5,14 +5,15 @@ import { AddUser, Trash,Close } from "../../components/Icons/Icons";
 import { AddMutipleRider } from "../../data/ridersController";
 import { useRef,useState } from "react";
 const AddRider = ({riders,closeModal,showToast, categoryServer}) =>{
+    console.log(categoryServer);
     const [groupRider,setGroupRider] = useState([]);
-    const category = useRef(categoryServer[0]);
+    const category = useRef(categoryServer[0]?.id);
     const name = useRef(""); 
     const plateNumber = useRef("");
     const userInfo = useRef({
         name:"",
         number:null,
-        category:"", 
+        category_id:null, 
     });
     const onDeleteHandler = (item)=>{
         console.log(item);
@@ -37,7 +38,7 @@ const AddRider = ({riders,closeModal,showToast, categoryServer}) =>{
         </div>
         <div className="m-auto md:w-[80%] sm:w-[100%] xs:w-[100%] lg:w-[80%] mt-3">   
             <div className="mb-3">
-                <Select items={categoryServer} label="Category" getValue={(value)=>{category.current = JSON.parse(value);}}/>
+                <Select items={categoryServer} label="Category" getValue={(value)=>{category.current = value;}}/>
             </div>  
             <div className="grid grid-cols-8 items-center">
                 <div className="col-span-3">
@@ -56,7 +57,7 @@ const AddRider = ({riders,closeModal,showToast, categoryServer}) =>{
                         if(duplicate || duplicateServer)
                             alert("Try another number"); 
                         else{
-                            setGroupRider(()=>[...groupRider,Object.assign(dataRider,{category:category.current.name})]);  
+                            setGroupRider(()=>[...groupRider,Object.assign(dataRider,{category_id:parseInt(category.current)})]);  
                             plateNumber.current.value = "";
                             name.current.value = "";
                         }
@@ -79,7 +80,7 @@ const AddRider = ({riders,closeModal,showToast, categoryServer}) =>{
                                 <div key={index} className="grid grid-cols-8 gap-3 items-center text-xs border-b py-2">
                                     <div className="ml-3 col-span-2">#{item.number}</div>
                                     <div className="col-span-3">{item.name}</div>
-                                    <div className="col-span-2">{item.category}</div>
+                                    <div className="col-span-2">{categoryServer.find((cat)=> item.category_id === cat.id).name}</div>
                                     <button className="curspor pointer" onClick={()=>onDeleteHandler(item)}><Trash/></button>
                                 </div>
                             );

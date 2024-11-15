@@ -9,7 +9,7 @@ import RerunMessage from "../../Pages/ModalMainPage/RerunMessage";
 import stringPadding from "../../util/stringPadding";
 
 const ListItem = (props)=>{
-    const {number, stage} = props.item;
+    const {number, stage, id} = props.item;
     const [totalTime, setTotalTime] = useState(0);
     const [running, setRunning] = useState(false);
     const [getStartTime,setGetStartTime] = useState("00:00:00:00");
@@ -49,7 +49,7 @@ const ListItem = (props)=>{
 
     const playHandle = ()=>{
         startTime.current = Date.now();
-        UpdateRider(props.item,StatusRider.RUNNING,stage.name);
+        UpdateRider(props.item,StatusRider.RUNNING,stage);
         setRunning(true); 
         setGetStartTime(getOnTime);
         buttonsDisplay.current.start = false;
@@ -58,7 +58,7 @@ const ListItem = (props)=>{
     };
     const stopHandler = ()=>{
         setRunning(false); 
-        UpdateRider(props.item,StatusRider.TOUCHDOWN,stage.name);
+        UpdateRider(props.item,StatusRider.TOUCHDOWN,stage);
         setFinishedTime(getOnTime);
         buttonsDisplay.current.end = false;  
         buttonsDisplay.current.save = true;  
@@ -67,7 +67,7 @@ const ListItem = (props)=>{
         setShowMessage(true); 
     };
     const confirmReRun = () =>{ 
-        UpdateRider(props.item,StatusRider.RERUN,stage.name);
+        UpdateRider(props.item,StatusRider.RERUN,stage);
         setTotalTime(0); 
         setGetStartTime("00:00:00:00");
         setFinishedTime("00:00:00:00");
@@ -76,8 +76,8 @@ const ListItem = (props)=>{
         setShowMessage(false); 
     };
     const saveHandler =() =>{
-        UpdateRider(props.item,StatusRider.FINISHED,stage.name);
-        AddIndividualRiderFinished({rider_id: number, stage:stage.name,stage_id:stage.id, startTime:getStartTime, finishedTime:finishedTime, totalTime:totalTime});
+        UpdateRider(props.item,StatusRider.FINISHED,stage);
+        AddIndividualRiderFinished({rider_id: id, rider_number:number, stage:stage.name,stage_id:stage.id, startTime:getStartTime, finishedTime:finishedTime, totalTime:totalTime});
         setTotalTime(0); 
         setGetStartTime("00:00:00:00");
         setFinishedTime("00:00:00:00");

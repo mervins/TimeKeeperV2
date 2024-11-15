@@ -1,15 +1,20 @@
 import "./App.css"; 
-import Clock from "react-live-clock"; 
-import MainPage from "./Pages/MainPage";  
+// import Clock from "react-live-clock"; 
+// import MainPage from "./Pages/MainPage";  
+import RouterComponents from "./router";
+import { ModalProvider } from "react-modal-hook";
 
 function App() {  
     return (
-        <div> 
-            <center>
-                <h1 className='font-bold py-2'><Clock format={"HH:mm:ss"} ticking={true} timezone={"Asia/Manila"} /></h1>
-            </center>
-            <MainPage ></MainPage>
-        </div>
+        // <div> 
+        //     <center>
+        //         <h1 className='font-bold py-2'><Clock format={"HH:mm:ss"} ticking={true} timezone={"Asia/Manila"} /></h1>
+        //     </center>
+        //     <MainPage ></MainPage>
+        // </div>
+        <ModalProvider>
+            <RouterComponents/>
+        </ModalProvider>
     );
 }
 

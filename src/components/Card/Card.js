@@ -8,7 +8,7 @@ import Modal from "../Modal/Modal";
 import RerunMessage from "../../Pages/ModalMainPage/RerunMessage";
 
 const Card = (props)=>{
-    const {category,number, stage} = props.item;
+    const {category,number, stage,id} = props.item;
     const [totalTime, setTotalTime] = useState(0);
     const [running, setRunning] = useState(false);
     const [getStartTime,setGetStartTime] = useState("00:00:00:00");
@@ -71,7 +71,7 @@ const Card = (props)=>{
     };
     const saveHandler =() =>{
         UpdateRider(props.item,StatusRider.FINISHED,stage);
-        AddIndividualRiderFinished({rider_id: number, stage:stage, startTime:getStartTime, finishedTime:finishedTime, totalTime:totalTime});
+        AddIndividualRiderFinished({rider_id: id, rider_number: number, stage:stage, startTime:getStartTime, finishedTime:finishedTime, totalTime:totalTime});
         setTotalTime(0); 
         setGetStartTime("00:00:00:00");
         setFinishedTime("00:00:00:00");

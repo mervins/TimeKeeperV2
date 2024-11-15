@@ -4,13 +4,13 @@ const NumberToTime = ({stages,desc,showDel,close, number})=>{
     // let hasKey = stages.filter((item)=> Object.keys(item).some(key => key === desc));
     // console.log(hasKey[0]?.time);
     const milli = new Date();
-    milli.setMilliseconds(stages.time);
+    milli.setMilliseconds(stages.totalTime);
     return (
-        <div className="flex text-sm"> 
+        <div className="flex text-sm justify-center"> 
             <div className={desc === "totalTime" ? "text-green-600" : "text-black"}>
-                <span>{("0" + Math.floor((stages.time  / 60000) % 60)).slice(-2)}:</span>
-                <span>{("0" + Math.floor((stages.time  / 1000) % 60)).slice(-2)}:</span>  
-                <span>{milli.getMilliseconds()}</span>  
+                <span className="md:text-[14px] text-xs text-gray-600">{("0" + Math.floor((stages.totalTime  / 60000) % 60)).slice(-2)}:</span>
+                <span className="md:text-[14px] text-xs text-gray-600">{("0" + Math.floor((stages.totalTime  / 1000) % 60)).slice(-2)}:</span>  
+                <span className="md:text-[14px] text-xs text-gray-600">{milli.getMilliseconds()}</span>  
                 {showDel && <span className="text-red-500 cursor-pointer ml-2" onClick={ async()=>{
                     let text = "Click OK to confirm?";
                     if (confirm(text) == true) {

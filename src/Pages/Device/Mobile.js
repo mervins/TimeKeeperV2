@@ -85,7 +85,7 @@ const Mobile = ({currentCategory,setCurrentCategory,setCurrentStage,currentStage
                                 </Link>
                             </div>
                             <div className="mt-5">
-                                <Select items={stageServer} label="Stages" getValue={(value)=>{getStageList(value);}} currentSelect={currentStage}/> 
+                                <Select items={stageServer} label="Stages" getValue={(value)=>{getStageList(value);}} currentSelect={currentStage.id}/> 
                             </div>
                             <div className="mt-5">
                                 <Select items={categoryServer} label="Category" getValue={value=>setCurrentCategory(value)} currentSelect={currentCategory}/>

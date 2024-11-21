@@ -15,8 +15,14 @@ export const AddMutipleCategory = async (rows) => {
     await db.category.bulkAdd(rows);
 };
 
-export const UpdateCategory = async(category) => {
-    await db.category.put({category:category});
+export const UpdateCategory = async(id,detail) => {
+    // await db.category.put({category:category});
+    await db.category
+        .where("id")
+        .equals(id)
+        .modify(category => {
+            Object.assign(category, detail);
+        }); 
 };
 
 

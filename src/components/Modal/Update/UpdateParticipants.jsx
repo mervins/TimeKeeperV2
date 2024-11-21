@@ -29,7 +29,7 @@ const UpdateParticipants = ({riders,categoryServer,hide,participant})=>{
                     <Close/>
                 </button> 
                 <div className="border-b mb-2">
-                    <div className="font-bold text-md ml-4 mt-2">Add Rider</div>
+                    <div className="font-bold text-md ml-4 mt-2">Update Rider</div>
                 </div>
                 <div className="m-auto md:w-[80%] sm:w-[100%] xs:w-[100%] lg:w-[80%] mt-3">   
                     <div className="mb-3">

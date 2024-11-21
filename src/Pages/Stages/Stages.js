@@ -17,7 +17,7 @@ const Stage = ()=>{
                     </div>
                 </div> 
                 <div className="bg-white rounded-md m-0 2md:m-4 h-[88vh] overflow-y-auto">
-                    <div className="m-2 relative flex justify-end">
+                    <div className="m-2 mx-2 sm:m-4 sm:mx-10 relative flex justify-end">
                         <div>
                             <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold">
                                 Add Stage

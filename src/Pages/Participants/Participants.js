@@ -14,6 +14,8 @@ import Toast, {toastProperties} from "../../components/Toast/Toast";
 import { FaRegTrashAlt,FaPen  } from "react-icons/fa";
 import Select from "../../UI/Select";
 import UpdateParticipants from "../../components/Modal/Update/UpdateParticipants";
+import DeleteModal from "../../components/Modal/Delete/DeleteParticipants";
+import { nameCustomize } from "../../util/helper";
 
 
 const Participants = ()=>{
@@ -26,6 +28,7 @@ const Participants = ()=>{
 
     const createParticipants = useDialogHook(ParticipantsModal);
     const editParticipans = useDialogHook(UpdateParticipants);
+    const deleteDialog = useDialogHook(DeleteModal);
     const showToast = (type,message,title)=>{ 
         let toast = toastProperties(type,message,title);  
         setListToast([...listToast, toast]);   
@@ -60,6 +63,14 @@ const Participants = ()=>{
         );
     }        
     );
+
+    const confirmDelet = (rider)=>{
+        deleteDialog({rider:rider},(callback)=>{
+            if(callback.success){
+                showToast("success","Participant Deleted","Successfully");
+            }
+        });
+    };
     return (<>
         <Sidebar>
             {listItem}
@@ -70,7 +81,7 @@ const Participants = ()=>{
                     </div> 
                 </div>
                 <div className="bg-white rounded-md m-0 2md:m-4 h-[88vh] overflow-y-auto">
-                    <div className="m-2 relative flex justify-between flex-wrap">
+                    <div className="m-2 mx-0 sm:m-4 sm:mx-10 relative flex justify-between flex-wrap">
                         <div className="hidden md:inline flex border rounded-xl overflow-hidden bg-white border-[#d8d8d8] py-1 px-1">
                             {categoryServer && categoryServer.map((cat) => (
                                 <button
@@ -88,7 +99,7 @@ const Participants = ()=>{
                         </div>
                         <Select className="inline md:hidden" items={categoryServer} label="Category" getValue={value=>setCatID(parseInt(value))} currentSelect={catID?.id}/>
                         <div>
-                            <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold" onClick={createHandle}>
+                            <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold " onClick={createHandle}>
                                 Add Participant
                             </button>
                         </div>
@@ -120,7 +131,12 @@ const Participants = ()=>{
                                                             {result.number}
                                                         </TableCell>  
                                                         <TableCell className="py-2 px-2 text-[12px] text-black text-center">
-                                                            {result.name}
+                                                            <span className="hidden sm:inline">
+                                                                {result.name}
+                                                            </span>
+                                                            <span className="inline sm:hidden">
+                                                                {nameCustomize(result.name)} 
+                                                            </span>
                                                         </TableCell>  
                                                         <TableCell className="py-2 px-2 text-[12px] text-black text-center">
                                                             {catID?.name}
@@ -129,7 +145,7 @@ const Participants = ()=>{
                                                             <button className="text-base" onClick={()=>editHandler(result)}>
                                                                 <FaPen />
                                                             </button>
-                                                            <button className="text-base text-red-500">
+                                                            <button className="text-base text-red-500" onClick={()=>confirmDelet(result)}>
                                                                 <FaRegTrashAlt/>
                                                             </button>
                                                         </TableCell>

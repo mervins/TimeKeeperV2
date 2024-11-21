@@ -12,6 +12,7 @@ import Table from "../../components/Table/Table";
 import TableBody from "../../components/Table/TableBody";
 import TableHead from "../../components/Table/TableHead";
 import TableCell from "../../components/Table/TableCell";
+import { nameCustomize } from "../../util/helper";
 
 const ResultModal = (props)=>{
     
@@ -26,7 +27,7 @@ const ResultModal = (props)=>{
         stages:[],
         number:null
     });
-    const header = ["Top","Race #","Name","Category"];
+    const header = ["Top","Race #","Name"];
     React.useEffect(() => {
         if (typeof categoryServer != "undefined") { 
             setCurrentCategory(categoryServer[0]?.id);
@@ -227,6 +228,11 @@ const ResultModal = (props)=>{
                                             );
                                         })
                                     }
+                                    <>
+                                        <TableHead className="text-center hidden sm:inline">
+                                            Category
+                                        </TableHead> 
+                                    </>
                                     {
                                         stageServer.map((stage,key)=>{
                                             return(
@@ -250,9 +256,14 @@ const ResultModal = (props)=>{
                                                     {result.number}
                                                 </TableCell>  
                                                 <TableCell className="py-2 px-2 text-[12px] text-black text-center">
-                                                    {result.name}
+                                                    <span className="hidden sm:inline">
+                                                        {result.name}
+                                                    </span>
+                                                    <span className="inline sm:hidden">
+                                                        {nameCustomize(result.name)} 
+                                                    </span>
                                                 </TableCell>  
-                                                <TableCell className="py-2 px-2 text-[12px] text-black text-center">
+                                                <TableCell className="py-2 px-2 text-[12px] text-black text-center hidden sm:inline">
                                                     {catDetails?.name || ""}
                                                 </TableCell> 
                                                 {

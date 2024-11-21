@@ -6,13 +6,59 @@ import Table from "../../components/Table/Table";
 import TableBody from "../../components/Table/TableBody";
 import TableHead from "../../components/Table/TableHead";
 import TableCell from "../../components/Table/TableCell";
-import React from "react";
+import React,{useState} from "react";
+import { useDialogHook } from "../../util/customehooks";
+import { FaRegTrashAlt,FaPen  } from "react-icons/fa";
+import Toast, {toastProperties} from "../../components/Toast/Toast";
+import CategoryModal from "../../components/Modal/Create/Category";
+import UpdateCategoryModal from "../../components/Modal/Update/UpdateCategory";
+import DeleteCategoryModal from "../../components/Modal/Delete/DeleteCategory";
+
 
 const Category = ()=>{
     
     let categoryServer = CategoryContrller();
+
+    const [listToast, setListToast] = useState([]);   
+    const createCategories = useDialogHook(CategoryModal);
+    const editCategory = useDialogHook(UpdateCategoryModal);
+    const deleteDialog = useDialogHook(DeleteCategoryModal);
+    const showToast = (type,message,title)=>{ 
+        let toast = toastProperties(type,message,title);  
+        setListToast([...listToast, toast]);   
+    };
+    const createHandle = ()=>{
+        createCategories({}, (callback) => {
+            if(callback?.success){
+                showToast("success","Category Saved","Successfully");
+            }
+        });
+    };
+    const editHandler = (item)=>{
+        editCategory({ category:item }, (callback) => {
+            if(callback?.success){
+                showToast("success","Category Saved","Successfully");
+            }
+        });
+        
+    };
+    const listItem = listToast.map((toast, i) =>    {
+        return (
+            <Toast key={i} toast={toast} position="top-left"></Toast>
+        );
+    }        
+    );
+
+    const confirmDelete = (item)=>{
+        deleteDialog({category:item},(callback)=>{
+            if(callback.success){
+                showToast("success","Category Deleted","Successfully");
+            }
+        });
+    };
     return (<>
         <Sidebar>
+            {listItem}
             <div>
                 <div className="border-b border-slate-400">
                     <div className="p-4 font-bold text-xl text-yellow-600">
@@ -20,9 +66,9 @@ const Category = ()=>{
                     </div>
                 </div> 
                 <div className="bg-white rounded-md m-0 2md:m-4 h-[88vh] overflow-y-auto">
-                    <div className="m-2 relative flex justify-end">
+                    <div className="m-2 mx-2 sm:m-4 sm:mx-10 relative flex justify-end">
                         <div>
-                            <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold">
+                            <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold" onClick={createHandle}>
                                 Add Category
                             </button>
                         </div>
@@ -34,7 +80,7 @@ const Category = ()=>{
                                     <thead className="bg-gray-50">
                                         <tr>
                                             {
-                                                ["No","Name"].map((header,key)=>{
+                                                ["No","Name","Action"].map((header,key)=>{
                                                     return(
                                                         <TableHead key={key} className="text-center">
                                                             {header}
@@ -56,6 +102,14 @@ const Category = ()=>{
                                                         <TableCell className="py-2 px-2 text-[12px] text-black text-center">
                                                             {result.name}
                                                         </TableCell>  
+                                                        <TableCell className="py-2 px-2 text-[12px] text-black text-center flex justify-center gap-4">
+                                                            <button className="text-base" onClick={()=>editHandler(result)}>
+                                                                <FaPen />
+                                                            </button>
+                                                            <button className="text-base text-red-500" onClick={()=>confirmDelete(result)}>
+                                                                <FaRegTrashAlt/>
+                                                            </button>
+                                                        </TableCell>
                                                     </tr> 
                                                 );
                                             })

@@ -16,7 +16,8 @@ const UpdateParticipants = ({riders,categoryServer,hide,participant})=>{
                 alert("Try another number"); 
                 return;
             }
-            await UpdateInfo(participant?.id,userInfo);
+            let userData = {...userInfo, category_id:parseInt(category)};
+            await UpdateInfo(participant?.id,userData);
             hide({success: true });
         }catch(e){
             alert(`Error : ${e}`);

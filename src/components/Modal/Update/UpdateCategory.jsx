@@ -14,7 +14,7 @@ const UpdateCategoryModal = ({category, hide}) =>{
 
     const saveHandler = async() =>{
         if(categoryItem.name.trim().length){
-            let duplicateServer = categoryInServer.some(item => setSpacesAndLowerCase(item.name) === setSpacesAndLowerCase(categoryItem.name)); //check in server 
+            let duplicateServer = categoryInServer.filter(item => item.id != category.id).some(item => setSpacesAndLowerCase(item.name) === setSpacesAndLowerCase(categoryItem.name)); //check in server 
             if(duplicateServer)
                 alert("Category are in the list"); 
             else{ 

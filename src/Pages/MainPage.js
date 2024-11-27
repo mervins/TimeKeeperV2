@@ -2,8 +2,8 @@ import { useState,useEffect,useRef } from "react";
 import ListItem from "../components/Card/ListItem";
 import { Close,Menu, AddUser,Setting, Category,Stage,Trophy, Trash} from "../components/Icons/Icons"; 
 import { StatusRider } from "../data/DummyData";
-import Riders, { UpdateRider,DeleteRider,DeleteAllRiders } from "../data/ridersController";
-import Stages, {DeleteAllStages} from "../data/stagesController";
+import Riders, { UpdateRider,DeleteRider } from "../data/ridersController";
+import Stages from "../data/stagesController";
 import Modal from "../components/Modal/Modal";
 import ImportModal from "./ModalMainPage/ImportModal";
 import ResultModal from "./ModalMainPage/ResultModal";
@@ -111,16 +111,16 @@ const MainPage = ()=>{
         setListToast([...listToast, toast]);   
     };
 
-    const DeleteAllTables = ()=>{
-        let text = "Click OK to delete all datas?";
-        if (confirm(text) == true) {
-            text = "You pressed OK!"; 
-            DeleteAllRiders();
-            DeleteAllStages();
-        } else {
-            text = "You canceled!";
-        }
-    };
+    // const DeleteAllTables = ()=>{
+    //     let text = "Click OK to delete all datas?";
+    //     if (confirm(text) == true) {
+    //         text = "You pressed OK!"; 
+    //         DeleteAllRiders();
+    //         DeleteAllStages();
+    //     } else {
+    //         text = "You canceled!";
+    //     }
+    // };
 
     const listItem = listToast.map((toast, i) =>    {
         return (
@@ -148,7 +148,7 @@ const MainPage = ()=>{
             setShowModal={setShowModal} 
             ridersParticipants={ridersParticipants} 
             addRunner={addRunner} 
-            DeleteAllTables={DeleteAllTables}
+            // DeleteAllTables={DeleteAllTables}
             StatusRider={StatusRider} 
             idRider={idRider} 
             showModal={showModal} 
@@ -198,9 +198,9 @@ const MainPage = ()=>{
             </div>
             {isPageWide && <div className="border max-w-[350px] w-full "> 
                 <div className="mt-3 flex gap-3 justify-center items-center">
-                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-blue-500 text-white" onClick={()=>setShowModal({...showModal, showResult:true})}>RANK</button>
-                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-orange-400 text-white" onClick={()=>setShowModal({...showModal, showImport:true})}>IMPORT</button>   
-                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-red-500 text-white" onClick={()=>DeleteAllTables()}>CLEAR</button>
+                    {/* <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-blue-500 text-white" onClick={()=>setShowModal({...showModal, showResult:true})}>RANK</button>
+                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-orange-400 text-white" onClick={()=>setShowModal({...showModal, showImport:true})}>IMPORT</button>    */}
+                    {/* <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-red-500 text-white" onClick={()=>DeleteAllTables()}>CLEAR</button> */}
                 </div>
                 <div className="mt-5 font-bold">
                     <Select items={stageServer} label="Stages" getValue={(value)=>{getStageList(value);}} currentSelect={currentStage?.id}/> 

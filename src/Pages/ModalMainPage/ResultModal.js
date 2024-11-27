@@ -1,7 +1,7 @@
 import React, {useState,useMemo,useRef} from "react";
-import { TotalTime,AddMutipleRiderFinished } from "../../data/stagesController"; 
+import { TotalTime } from "../../data/stagesController"; 
 import NumberToTime from "../../components/NumberToTime";
-import { utils, writeFile,read } from "xlsx";
+import { utils, writeFile } from "xlsx";
 import { Close } from "../../components/Icons/Icons";
 import Modal from "../../components/Modal/Modal"; 
 import Select from "../../UI/Select";
@@ -49,28 +49,28 @@ const ResultModal = (props)=>{
     [currentCategory,currentStage]);  
     console.timeEnd("filter array");
     
-    const handleExport = () => {
-        const headings = [[
-            "rider_id",
-            "stage",
-            "startTime", 
-            "finishedTime", 
-            "totalTime", 
-        ]];
-        let arrangeExportData = stagesFinished.map(count => Object.assign(
-            {   rider_id:count.rider_id, 
-                stage:count.stage, 
-                startTime:count.startTime,
-                finishedTime:count.finishedTime,  
-                totalTime: count.totalTime, 
-            }));
-        const wb = utils.book_new();
-        const ws = utils.json_to_sheet([]);
-        utils.sheet_add_aoa(ws, headings);
-        utils.sheet_add_json(ws, arrangeExportData, { origin: "A2", skipHeader: true });
-        utils.book_append_sheet(wb, ws, "Riders");
-        writeFile(wb, "Riders.xlsx");
-    };
+    // const handleExport = () => {
+    //     const headings = [[
+    //         "rider_id",
+    //         "stage",
+    //         "startTime", 
+    //         "finishedTime", 
+    //         "totalTime", 
+    //     ]];
+    //     let arrangeExportData = stagesFinished.map(count => Object.assign(
+    //         {   rider_id:count.rider_id, 
+    //             stage:count.stage, 
+    //             startTime:count.startTime,
+    //             finishedTime:count.finishedTime,  
+    //             totalTime: count.totalTime, 
+    //         }));
+    //     const wb = utils.book_new();
+    //     const ws = utils.json_to_sheet([]);
+    //     utils.sheet_add_aoa(ws, headings);
+    //     utils.sheet_add_json(ws, arrangeExportData, { origin: "A2", skipHeader: true });
+    //     utils.book_append_sheet(wb, ws, "Riders");
+    //     writeFile(wb, "Riders.xlsx");
+    // };
 
     const handlerResult = ()=>{
         const headings = [[
@@ -115,27 +115,27 @@ const ResultModal = (props)=>{
         return hasKey.length ? `${minutes}:${seconds}:${milli.getMilliseconds()}` : "00:00:00";
     };
 
-    const handleImport = ($event) => {
-        const files = $event.target.files; 
-        if (files.length) {
-            const file = files[0];
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                const wb = read(event.target.result);
-                const sheets = wb.SheetNames; 
-                if (sheets.length) { 
-                    let importFinished = utils.sheet_to_json(wb.Sheets[sheets[0]]); 
-                    let difference = importFinished.filter((item)=> stagesFinished.every(item2 => item2.rider_id != item.rider_id));  
-                    console.log(stagesFinished);
-                    console.log(importFinished);
-                    AddMutipleRiderFinished(difference); 
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }else{
-            alert("error");
-        }
-    };
+    // const handleImport = ($event) => {
+    //     const files = $event.target.files; 
+    //     if (files.length) {
+    //         const file = files[0];
+    //         const reader = new FileReader();
+    //         reader.onload = async (event) => {
+    //             const wb = read(event.target.result);
+    //             const sheets = wb.SheetNames; 
+    //             if (sheets.length) { 
+    //                 let importFinished = utils.sheet_to_json(wb.Sheets[sheets[0]]); 
+    //                 let difference = importFinished.filter((item)=> stagesFinished.every(item2 => item2.rider_id != item.rider_id));  
+    //                 console.log(stagesFinished);
+    //                 console.log(importFinished);
+    //                 AddMutipleRiderFinished(difference); 
+    //             }
+    //         };
+    //         reader.readAsArrayBuffer(file);
+    //     }else{
+    //         alert("error");
+    //     }
+    // };
 
     let getStageList = async(id)=>{
         let detailStage = await GetStage(parseInt(id));
@@ -186,8 +186,8 @@ const ResultModal = (props)=>{
         </div>
         <div className="overflow-y-auto h-[86vh]"> 
             <div className="flex flex-row-reverse gap-2 mr-2 mt-2">  
-                <button className="border rounded-md bg-white shadow-md cursor-pointer bg-slate-500 text-white text-xs px-2 py-1" onClick={handleExport}>Export</button>
-                <div>
+                {/* <button className="border rounded-md bg-white shadow-md cursor-pointer bg-slate-500 text-white text-xs px-2 py-1" onClick={handleExport}>Export</button> */}
+                {/* <div>
                     <input type="file" name="file" className="custom-file-input hidden" id="inputGroupFile" required onChange={handleImport}
                         accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/> 
                     <label className="custom-file-label" htmlFor="inputGroupFile">
@@ -195,7 +195,7 @@ const ResultModal = (props)=>{
                             Import
                         </div>
                     </label>
-                </div>
+                </div> */}
                 <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white text-xs" onClick={handlerResult}>Results</button>
             </div>
             <div className="flex md:gap-4 gap-1 mt-2 md:px-6 px-1">

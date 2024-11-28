@@ -61,9 +61,9 @@ const Sidebar = ({children})=>{
             path: "/stages"
         },
         {
-            icon:<FcServices className="text-2xl"/>,
-            label: "Settings",
-            path: "/setting"
+            icon:<FcLandscape className="text-2xl"/>,
+            label: "Results",
+            path: "/results"
         },
         {
             icon:<FcAlarmClock className="text-2xl"/>,
@@ -74,6 +74,11 @@ const Sidebar = ({children})=>{
             icon:<FcHome className="text-2xl"/>,
             label: "Home Page",
             path: "/"
+        },
+        {
+            icon:<FcServices className="text-2xl"/>,
+            label: "Settings",
+            path: "/setting"
         }
     ];
 

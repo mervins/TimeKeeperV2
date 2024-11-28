@@ -80,7 +80,7 @@ const Category = ()=>{
                                     <thead className="bg-gray-50">
                                         <tr>
                                             {
-                                                ["No","Name","Action"].map((header,key)=>{
+                                                ["ID","Name","Action"].map((header,key)=>{
                                                     return(
                                                         <TableHead key={key} className="text-center">
                                                             {header}
@@ -97,7 +97,7 @@ const Category = ()=>{
                                                 return(
                                                     <tr className='hover:bg-gray-200' key={key}> 
                                                         <TableCell className="py-2 px-2 text-[12px] text-black text-center">
-                                                            {key + 1}
+                                                            {result.id}
                                                         </TableCell>  
                                                         <TableCell className="py-2 px-2 text-[12px] text-black text-center">
                                                             {result.name}

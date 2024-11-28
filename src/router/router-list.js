@@ -5,6 +5,7 @@ import MiainPage from "../Pages/MainPage";
 import Category from "../Pages/Category/Category";
 import Stages from "../Pages/Stages/Stages";
 import Participants from "../Pages/Participants/Participants";
+import Results from "../Pages/Participants/Results";
 
 const routes = [
     {
@@ -56,6 +57,15 @@ const routes = [
         path: "/participants",
         component: ()=> <Participants/>,
         title: "Participants",
+        layout: "default",
+        access: {
+            global: true,
+        },   
+    },
+    {
+        path: "/results",
+        component: ()=> <Results/>,
+        title: "Results",
         layout: "default",
         access: {
             global: true,

@@ -41,7 +41,7 @@ export const getRider = async(riderID)=>{
     return rider;
 };
 
-export const TotalTime = (riders,stagesFinished,category,stageServer,currentStage) =>{  
+export const TotalTime = (riders,stagesFinished,category,currentStage) =>{  
     try{
         console.log("============Total Time=============");
         console.log(category);

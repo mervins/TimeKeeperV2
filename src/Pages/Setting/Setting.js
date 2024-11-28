@@ -19,14 +19,23 @@ const raceType = [
 ];
 
 const Setting = ()=>{
-    const [mode, setMode] = React.useState(1);
-    const importDialog = useDialogHook(ImportModal);
+    
     let stagesFinished = Stages(); 
     let ridersParticipants = Riders();
     let categories = CategoryContrller();
     let stages = StageController();
+    const [mode, setMode] = React.useState(1);
+    const [currentStage, setCurrentStage] = React.useState(0);
+    const importDialog = useDialogHook(ImportModal);
+
+    React.useEffect(()=>{
+        if(stages){
+            setCurrentStage(stages[0].id);
+        }
+    },[stages]);
+
     const importHandler = ()=>{
-        importDialog({}, (callback) => {
+        importDialog({ridersTest:ridersParticipants}, (callback) => {
             if(callback?.success){
                 // showToast("success","Riders Saved","Successfully");
             }
@@ -45,6 +54,7 @@ const Setting = ()=>{
     const handleExport = () => {
         const headings = [[
             "rider_id",
+            "rider_number",
             "stage",
             "startTime", 
             "finishedTime", 
@@ -52,6 +62,7 @@ const Setting = ()=>{
         ]];
         let arrangeExportData = stagesFinished.map(count => Object.assign(
             {   rider_id:count.rider_id, 
+                rider_number:count.rider_number,
                 stage:count.stage, 
                 startTime:count.startTime,
                 finishedTime:count.finishedTime,  
@@ -75,7 +86,7 @@ const Setting = ()=>{
         
         const wb = utils.book_new();
         let check = categories.map((cat,index)=>{
-            let arrangeExportData = TotalTime(ridersParticipants,stagesFinished,cat.id,stageName[0].id).map((rider, riderIndex) => {
+            let arrangeExportData = TotalTime(ridersParticipants,stagesFinished,cat.id,parseInt(currentStage)).map((rider, riderIndex) => {
                 // Dynamically add stages
                 let stagesData = stages.reduce((acc, stage) => {
                     let name = stage.name;
@@ -127,7 +138,6 @@ const Setting = ()=>{
                     </div>
                     <div className="m-2 relative flex">
                         <div className="mx-4 flex flex-col gap-2 border rounded-xl overflow-hidden bg-white border-[#d8d8d8] py-1 px-1">
-                        
                             <div className="w-64 border-b">
                                 <label className="p-4 mb-2 font-semibold">Race Mode</label>
                                 <Select
@@ -135,6 +145,15 @@ const Setting = ()=>{
                                     label="Type" 
                                     getValue={value=>setMode(value)} 
                                     currentSelect={mode}
+                                />
+                            </div>
+                            <div className="w-64 border-b">
+                                <label className="p-4 mb-2 font-semibold">Ranking</label>
+                                <Select
+                                    items={stages} 
+                                    label="Sort by" 
+                                    getValue={value=>setCurrentStage(value)} 
+                                    currentSelect={currentStage}
                                 />
                             </div>
                             <div className="flex gap-4 items-center px-4 border-b pb-2">

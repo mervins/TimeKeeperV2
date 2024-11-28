@@ -243,7 +243,7 @@ const MainPage = ()=>{
             <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showAddRider:true})}><AddUser/><div>Participants</div></button>
             <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}><Trophy/><div>Result</div></button>
             <button className="col-span-2 flex justify-center items-center flex-col text-xs"  onClick={()=>setShowModal({...showModal, showStages:true})}><Stage/><div>Stage</div></button>
-            {isPageWide ? <Link to="/participants" className="col-span-2 flex justify-center items-center flex-col text-xs"><Setting/><div>Setting</div></Link> : 
+            {isPageWide ? <Link to="/participants" className="col-span-2 flex justify-center items-center flex-col text-xs"><Setting/><div>Dashboard</div></Link> : 
                 <button onClick={()=>setShowModal({...showModal, showNavBar:true})} className="col-span-2 flex justify-center items-center flex-col text-xs" ><Menu/><div>Menu</div></button>
             }
             

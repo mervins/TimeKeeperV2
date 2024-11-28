@@ -1,7 +1,7 @@
 import React, {useState,useMemo,useRef} from "react";
 import { TotalTime } from "../../data/stagesController"; 
 import NumberToTime from "../../components/NumberToTime";
-import { utils, writeFile } from "xlsx";
+// import { utils, writeFile } from "xlsx";
 import { Close } from "../../components/Icons/Icons";
 import Modal from "../../components/Modal/Modal"; 
 import Select from "../../UI/Select";
@@ -44,7 +44,7 @@ const ResultModal = (props)=>{
 
     console.time("filter array");
     const filteringCagtegory = useMemo(() => currentCategory ? 
-        TotalTime(ridersParticipants,stagesFinished,currentCategory,stageServer,currentStage) 
+        TotalTime(ridersParticipants,stagesFinished,currentCategory,currentStage) 
         : [],
     [currentCategory,currentStage]);  
     console.timeEnd("filter array");
@@ -72,48 +72,48 @@ const ResultModal = (props)=>{
     //     writeFile(wb, "Riders.xlsx");
     // };
 
-    const handlerResult = ()=>{
-        const headings = [[
-            "Rank",
-            "Number", 
-            "Name",
-            "Stage 1", 
-            "Stage 2", 
-            "Stage 3",
-            "Total Time" 
-        ]];
+    // const handlerResult = ()=>{
+    //     const headings = [[
+    //         "Rank",
+    //         "Number", 
+    //         "Name",
+    //         "Stage 1", 
+    //         "Stage 2", 
+    //         "Stage 3",
+    //         "Total Time" 
+    //     ]];
         
-        const wb = utils.book_new();
-        let cat = ["19 below","20-29","30-39","40 up","Executive","Ladies"]; 
-        let check = cat.map((item,index)=>{
-            let arrangeExportData = TotalTime(ridersParticipants,stagesFinished,item).map((count,index) => Object.assign(
-                {   Rank:index+1, 
-                    Number:count.id, 
-                    Name:count.name,
-                    Stage_1:handlerNumberToTime(count?.stages,"Stage1"),  
-                    Stage_2: handlerNumberToTime(count?.stages,"Stage2"),
-                    Stage_3: handlerNumberToTime(count?.stages,"Stage3"), 
-                    Total_time: handlerNumberToTime([{"time":count.totalAll, "totalTime":"FINISHED"}],"totalTime"),  
-                }));
-            let test = "test" + index;
-            test = utils.json_to_sheet([]);
-            utils.sheet_add_aoa(test, headings);
-            utils.sheet_add_json(test, arrangeExportData, { origin: "A2", skipHeader: true });
-            utils.book_append_sheet(wb, test, item);
-            return wb;
-        });
-        console.log(check);
-        writeFile(wb, "Enduro Results.xlsx");
-    };
+    //     const wb = utils.book_new();
+    //     let cat = ["19 below","20-29","30-39","40 up","Executive","Ladies"]; 
+    //     let check = cat.map((item,index)=>{
+    //         let arrangeExportData = TotalTime(ridersParticipants,stagesFinished,item).map((count,index) => Object.assign(
+    //             {   Rank:index+1, 
+    //                 Number:count.id, 
+    //                 Name:count.name,
+    //                 Stage_1:handlerNumberToTime(count?.stages,"Stage1"),  
+    //                 Stage_2: handlerNumberToTime(count?.stages,"Stage2"),
+    //                 Stage_3: handlerNumberToTime(count?.stages,"Stage3"), 
+    //                 Total_time: handlerNumberToTime([{"time":count.totalAll, "totalTime":"FINISHED"}],"totalTime"),  
+    //             }));
+    //         let test = "test" + index;
+    //         test = utils.json_to_sheet([]);
+    //         utils.sheet_add_aoa(test, headings);
+    //         utils.sheet_add_json(test, arrangeExportData, { origin: "A2", skipHeader: true });
+    //         utils.book_append_sheet(wb, test, item);
+    //         return wb;
+    //     });
+    //     console.log(check);
+    //     writeFile(wb, "Enduro Results.xlsx");
+    // };
 
-    const handlerNumberToTime = (stages,desc)=>{ 
-        let hasKey = stages.filter((item)=> Object.keys(item).some(key => key === desc));
-        const milli = new Date();
-        milli.setMilliseconds(hasKey[0]?.time);
-        const minutes = ("0" + Math.floor((hasKey[0]?.time  / 60000) % 60)).slice(-2);
-        const seconds = (":0" + Math.floor((hasKey[0]?.time  / 1000) % 60)).slice(-2);
-        return hasKey.length ? `${minutes}:${seconds}:${milli.getMilliseconds()}` : "00:00:00";
-    };
+    // const handlerNumberToTime = (stages,desc)=>{ 
+    //     let hasKey = stages.filter((item)=> Object.keys(item).some(key => key === desc));
+    //     const milli = new Date();
+    //     milli.setMilliseconds(hasKey[0]?.time);
+    //     const minutes = ("0" + Math.floor((hasKey[0]?.time  / 60000) % 60)).slice(-2);
+    //     const seconds = (":0" + Math.floor((hasKey[0]?.time  / 1000) % 60)).slice(-2);
+    //     return hasKey.length ? `${minutes}:${seconds}:${milli.getMilliseconds()}` : "00:00:00";
+    // };
 
     // const handleImport = ($event) => {
     //     const files = $event.target.files; 
@@ -196,7 +196,7 @@ const ResultModal = (props)=>{
                         </div>
                     </label>
                 </div> */}
-                <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white text-xs" onClick={handlerResult}>Results</button>
+                {/* <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white text-xs" onClick={handlerResult}>Results</button> */}
             </div>
             <div className="flex md:gap-4 gap-1 mt-2 md:px-6 px-1">
                 <div className="flex w-full">

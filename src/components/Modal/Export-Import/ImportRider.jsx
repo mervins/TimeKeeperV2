@@ -27,9 +27,9 @@ const ImportModal = (props) =>{
     };
 
     const saveHandle = () => {
-        let difference = rows.filter((item)=> props.ridersTest.every(item2 => item2.number != item.number));
-        console.log(difference);
-        AddMutipleRider(difference); 
+        // let difference = rows.filter((item)=> props.ridersTest.every(item2 => item2.number != item.number));
+        console.log(rows);
+        AddMutipleRider(rows); 
         props.hide({success:true});
     };
     return (

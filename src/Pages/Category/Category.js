@@ -6,27 +6,22 @@ import Table from "../../components/Table/Table";
 import TableBody from "../../components/Table/TableBody";
 import TableHead from "../../components/Table/TableHead";
 import TableCell from "../../components/Table/TableCell";
-import React,{useState} from "react";
+import React,{useContext} from "react";
 import { useDialogHook } from "../../util/customehooks";
 import { FaRegTrashAlt,FaPen  } from "react-icons/fa";
-import Toast, {toastProperties} from "../../components/Toast/Toast";
 import CategoryModal from "../../components/Modal/Create/Category";
 import UpdateCategoryModal from "../../components/Modal/Update/UpdateCategory";
 import DeleteCategoryModal from "../../components/Modal/Delete/DeleteCategory";
+import { TimerContext } from "../../context/TimerContext";
 
 
 const Category = ()=>{
     
     let categoryServer = CategoryContrller();
-
-    const [listToast, setListToast] = useState([]);   
     const createCategories = useDialogHook(CategoryModal);
     const editCategory = useDialogHook(UpdateCategoryModal);
     const deleteDialog = useDialogHook(DeleteCategoryModal);
-    const showToast = (type,message,title)=>{ 
-        let toast = toastProperties(type,message,title);  
-        setListToast([...listToast, toast]);   
-    };
+    const {showToast} = useContext(TimerContext);
     const createHandle = ()=>{
         createCategories({}, (callback) => {
             if(callback?.success){
@@ -42,12 +37,6 @@ const Category = ()=>{
         });
         
     };
-    const listItem = listToast.map((toast, i) =>    {
-        return (
-            <Toast key={i} toast={toast} position="top-left"></Toast>
-        );
-    }        
-    );
 
     const confirmDelete = (item)=>{
         deleteDialog({category:item},(callback)=>{
@@ -58,7 +47,6 @@ const Category = ()=>{
     };
     return (<>
         <Sidebar>
-            {listItem}
             <div>
                 <div className="border-b border-slate-400">
                     <div className="p-4 font-bold text-xl text-yellow-600">

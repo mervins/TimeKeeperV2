@@ -3,6 +3,7 @@ import "./App.css";
 // import MainPage from "./Pages/MainPage";  
 import RouterComponents from "./router";
 import { ModalProvider } from "react-modal-hook";
+import { TimerProvider } from "./context/TimerContext";
 
 function App() {  
     return (
@@ -12,9 +13,11 @@ function App() {
         //     </center>
         //     <MainPage ></MainPage>
         // </div>
-        <ModalProvider>
-            <RouterComponents/>
-        </ModalProvider>
+        <TimerProvider>
+            <ModalProvider>
+                <RouterComponents/>
+            </ModalProvider>
+        </TimerProvider>
     );
 }
 

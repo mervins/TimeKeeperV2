@@ -1,6 +1,6 @@
 
 import Sidebar from "../../components/Layout/Sidebar";
-import React,{useState,useEffect} from "react";
+import React,{useState,useEffect,useContext} from "react";
 import CategoryContrller from "../../data/categoryController";
 import TableContainer from "../../components/Table/TableContainer";
 import Table from "../../components/Table/Table";
@@ -10,29 +10,25 @@ import TableCell from "../../components/Table/TableCell";
 import Riders from "../../data/ridersController";
 import ParticipantsModal from "../../components/Modal/Create/Participants";
 import { useDialogHook } from "../../util/customehooks";
-import Toast, {toastProperties} from "../../components/Toast/Toast";
 import { FaRegTrashAlt,FaPen  } from "react-icons/fa";
 import Select from "../../UI/Select";
 import UpdateParticipants from "../../components/Modal/Update/UpdateParticipants";
 import DeleteModal from "../../components/Modal/Delete/DeleteParticipants";
 import { nameCustomize } from "../../util/helper";
+import { TimerContext } from "../../context/TimerContext";
 
 
 const Participants = ()=>{
     let categoryServer = CategoryContrller();
     let ridersParticipants = Riders();
-    const [catID, setCatID] = useState(null);
-    const [listToast, setListToast] = useState([]);   
+    const [catID, setCatID] = useState(null);  
     // eslint-disable-next-line no-unused-vars
     const [participant, setParticipant] = useState({});
+    const {showToast} = useContext(TimerContext);
 
     const createParticipants = useDialogHook(ParticipantsModal);
     const editParticipans = useDialogHook(UpdateParticipants);
     const deleteDialog = useDialogHook(DeleteModal);
-    const showToast = (type,message,title)=>{ 
-        let toast = toastProperties(type,message,title);  
-        setListToast([...listToast, toast]);   
-    };
     useEffect(() => {
         if (typeof categoryServer != "undefined") { 
             setCatID(categoryServer[0]); 
@@ -57,12 +53,6 @@ const Participants = ()=>{
         });
         
     };
-    const listItem = listToast.map((toast, i) =>    {
-        return (
-            <Toast key={i} toast={toast} position="top-left"></Toast>
-        );
-    }        
-    );
 
     const confirmDelet = (rider)=>{
         deleteDialog({rider:rider},(callback)=>{
@@ -73,7 +63,6 @@ const Participants = ()=>{
     };
     return (<>
         <Sidebar>
-            {listItem}
             <div>
                 <div className="border-b border-slate-400">
                     <div className="p-4 font-bold text-xl text-yellow-600">

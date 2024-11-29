@@ -11,23 +11,19 @@ import StagesModal from "../../components/Modal/Create/Stage";
 import DeleteStage from "../../components/Modal/Delete/DeleteStage";
 import EditStage from "../../components/Modal/Update/UpdateStage";
 import { useDialogHook } from "../../util/customehooks";
-import Toast, {toastProperties} from "../../components/Toast/Toast";
 import React from "react";
+import { TimerContext } from "../../context/TimerContext";
 
 
 
 const Stage = ()=>{
-    const stageServer = StageController();
-    const [listToast, setListToast] = React.useState([]);   
+    const stageServer = StageController();  
+    const {showToast} = React.useContext(TimerContext);
 
     
     const createCategories = useDialogHook(StagesModal);
     const editStage = useDialogHook(EditStage);
     const deleteDialog = useDialogHook(DeleteStage);
-    const showToast = (type,message,title)=>{ 
-        let toast = toastProperties(type,message,title);  
-        setListToast([...listToast, toast]);   
-    };
 
     const createHandle = ()=>{
         createCategories({}, (callback) => {
@@ -52,16 +48,9 @@ const Stage = ()=>{
             }
         });
     };
-    const listItem = listToast.map((toast, i) =>    {
-        return (
-            <Toast key={i} toast={toast} position="top-left"></Toast>
-        );
-    }        
-    );
     return (<>
         <Sidebar>
             <div>
-                {listItem}
                 <div className="border-b border-slate-400">
                     <div className="p-4 font-bold text-xl text-blue-600">
                         Stages

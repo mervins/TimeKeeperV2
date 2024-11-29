@@ -1,4 +1,4 @@
-import { useState,useEffect,useRef } from "react";
+import { useState,useEffect,useRef,useContext } from "react";
 import ListItem from "../components/Card/ListItem";
 import { Close,Menu, AddUser,Setting, Category,Stage,Trophy, Trash} from "../components/Icons/Icons"; 
 import { StatusRider } from "../data/DummyData";
@@ -7,8 +7,8 @@ import Stages from "../data/stagesController";
 import Modal from "../components/Modal/Modal";
 import ImportModal from "./ModalMainPage/ImportModal";
 import ResultModal from "./ModalMainPage/ResultModal";
-import Toast from "../components/Toast/Toast";
-import {toastProperties} from "../components/Toast/Toast";
+// import Toast from "../components/Toast/Toast";
+// import {toastProperties} from "../components/Toast/Toast";
 import { useMediaQuery } from "../Hooks/useMediaQuery"; 
 import RerunMessage from "./ModalMainPage/RerunMessage";
 import { ButtonIcon } from "../components/Button";
@@ -20,13 +20,14 @@ import StagesPage from "./ModalMainPage/StagesPage";
 import StageController, {GetStage} from "../data/stageController";
 import CategoryContrller from "../data/categoryController";
 import { Link } from "react-router-dom";
+import { TimerContext } from "../context/TimerContext";
 
 const MainPage = ()=>{  
     let categoryServer = CategoryContrller();
     let stageServer = StageController();  
+    let {showToast} = useContext(TimerContext);
     const [currentCategory,setCurrentCategory] = useState([]);
-    const [currentStage,setCurrentStage] = useState(); 
-    const [listToast, setListToast] = useState([]);   
+    const [currentStage,setCurrentStage] = useState();  
     const [showModal, setShowModal] = useState({
         showImport:false,
         showResult:false,
@@ -42,17 +43,6 @@ const MainPage = ()=>{
     let stagesFinished = Stages(); 
     let isPageWide = useMediaQuery("(min-width: 900px)"); 
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if ( listToast.length) {
-                deleteToast(listToast[0].id);
-            }
-        }, 1000);
-        
-        return () => {
-            clearInterval(interval);
-        }; 
-    }, [listToast]);
 
     useEffect(() => {
         if (typeof categoryServer != "undefined") { 
@@ -69,12 +59,6 @@ const MainPage = ()=>{
         }
 
     }, [stageServer]);
-
-    const deleteToast = id => { 
-        const toastListItem = listToast.findIndex(e => e.id === id); 
-        listToast.splice(toastListItem, 1);
-        setListToast([...listToast]);
-    };
 
     const addRunner = async(details,status,stage)=>{ 
         console.log("=========Stage==============");
@@ -104,12 +88,6 @@ const MainPage = ()=>{
         let getStage = stages.filter(stage => stage.stage == currentStage?.name); 
         return getStage[0]?.status != status; 
     };
-    
-
-    const showToast = (type,message,title)=>{ 
-        let toast = toastProperties(type,message,title);  
-        setListToast([...listToast, toast]);   
-    };
 
     // const DeleteAllTables = ()=>{
     //     let text = "Click OK to delete all datas?";
@@ -122,12 +100,6 @@ const MainPage = ()=>{
     //     }
     // };
 
-    const listItem = listToast.map((toast, i) =>    {
-        return (
-            <Toast key={i} toast={toast} position="top-left"></Toast>
-        );
-    }        
-    );
     let getStatusStage = (stages)=>{ 
         let stage = stages.filter(stage=> stage.stage == currentStage?.name);  
         return stage[0]?.status;
@@ -157,7 +129,6 @@ const MainPage = ()=>{
         <div className="relative h-[95vh] flex w-full mt-1">   
             {/* {!isPageWide &&<div onClick={()=>{setShowModal({...showModal, showNavBar:true});}} 
                 className="absolute left-2 top-4"><Menu/></div>} */}
-            {listItem}  
             {showModal.showImport && <Modal>
                 <ImportModal closeModal={()=>{setShowModal({...showModal, showImport:false});}} messageToast={()=>{showToast("success","Imported Files","Successfully");}} 
                     ridersParticipants={ridersParticipants}/> 

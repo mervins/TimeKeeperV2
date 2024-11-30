@@ -55,7 +55,7 @@ const Results = ()=>{
                     <div className="m-2 mx-0 sm:m-4 sm:mx-10 relative flex justify-between flex-wrap items-center">
                         <div>
                             <div className="hidden md:inline flex border rounded-xl overflow-hidden bg-white border-[#d8d8d8] items-center py-3 px-1">
-                                {categoryServer && categoryServer.map((cat) => (
+                                {categoryServer && categoryServer?.map((cat) => (
                                     <button
                                         key={cat.id}
                                         onClick={() => setCatID(cat)}
@@ -128,10 +128,10 @@ const Results = ()=>{
                                                             {catID?.name || ""}
                                                         </TableCell> 
                                                         {
-                                                            stageServer.map((serverStg,ind)=>{
+                                                            stageServer?.map((serverStg,ind)=>{
                                                                 return <TableCell key={ind} className="py-2 px-2 text-[12px] text-center">
                                                                     {
-                                                                        result?.stages.map((stage,key)=>{
+                                                                        result?.stages?.map((stage,key)=>{
                                                                             return(
                                                                                 <> 
                                                                                     {

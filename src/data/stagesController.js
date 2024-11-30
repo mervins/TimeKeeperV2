@@ -78,7 +78,7 @@ export const TotalTime = (riders,stagesFinished,category,currentStage) =>{
         // let checkedStages = sorted.map(item => Object.assign({...item, stages:compareStages(item,stageServer)})); 
         // return checkedStages;
         console.log(results);
-        console.log("============Total Time=============");
+        console.log("============Total Time Results=============");
         return results;
         
     }catch(e){

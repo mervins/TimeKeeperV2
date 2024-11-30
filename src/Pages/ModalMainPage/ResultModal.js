@@ -239,7 +239,7 @@ const ResultModal = (props)=>{
                             <thead className="bg-gray-50">
                                 <tr>
                                     {
-                                        header.map((header,key)=>{
+                                        header?.map((header,key)=>{
                                             return(
                                                 <TableHead key={key} className="text-center">
                                                     {header}
@@ -253,7 +253,7 @@ const ResultModal = (props)=>{
                                         </TableHead> 
                                     </>
                                     {
-                                        stageServer.map((stage,key)=>{
+                                        stageServer?.map((stage,key)=>{
                                             return(
                                                 <TableHead key={key} className="text-center">
                                                     {stage.name}
@@ -265,7 +265,7 @@ const ResultModal = (props)=>{
                             </thead>
                             <TableBody> 
                                 {
-                                    filteringCagtegory.map((result,key)=>{
+                                    filteringCagtegory?.map((result,key)=>{
                                         return(
                                             <tr className='hover:bg-gray-200' key={key}>
                                                 <TableCell className={`py-2 px-2 text-[16px] text-center  ${key < 11 ? "text-orange-400" : "text-black"}`}>
@@ -286,10 +286,10 @@ const ResultModal = (props)=>{
                                                     {catDetails?.name || ""}
                                                 </TableCell> 
                                                 {
-                                                    stageServer.map((serverStg,ind)=>{
+                                                    stageServer?.map((serverStg,ind)=>{
                                                         return <TableCell key={ind} className="py-2 px-2 text-[12px] text-center">
                                                             {
-                                                                result?.stages.map((stage,key)=>{
+                                                                result?.stages?.map((stage,key)=>{
                                                                     return(
                                                                         <> 
                                                                             {

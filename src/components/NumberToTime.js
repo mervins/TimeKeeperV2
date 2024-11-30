@@ -6,7 +6,7 @@ const NumberToTime = ({stages,desc,showDel,close, number})=>{
     const milli = new Date();
     milli.setMilliseconds(stages.totalTime);
     return (
-        <div className="flex text-sm justify-center"> 
+        <div className="flex text-sm justify-center font-mono font-bold"> 
             <div className={desc === "totalTime" ? "text-green-600" : "text-black"}>
                 <span className="md:text-[14px] text-xs text-gray-600">{("0" + Math.floor((stages.totalTime  / 60000) % 60)).slice(-2)}:</span>
                 <span className="md:text-[14px] text-xs text-gray-600">{("0" + Math.floor((stages.totalTime  / 1000) % 60)).slice(-2)}:</span>  

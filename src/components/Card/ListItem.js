@@ -6,14 +6,14 @@ import { StatusRider } from "../../data/DummyData";
 import { AddIndividualRiderFinished } from "../../data/stagesController";
 import Modal from "../Modal/Modal";
 import RerunMessage from "../../Pages/ModalMainPage/RerunMessage";
-import stringPadding from "../../util/stringPadding";
+// import stringPadding from "../../util/stringPadding";
 
 const ListItem = (props)=>{
     const {number, stage, id} = props.item;
     const [totalTime, setTotalTime] = useState(0);
     const [running, setRunning] = useState(false);
-    const [getStartTime,setGetStartTime] = useState("00:00:00:00");
-    const [finishedTime,setFinishedTime] = useState("00:00:00:00");
+    const [getStartTime,setGetStartTime] = useState("00:00:00:000");
+    const [finishedTime,setFinishedTime] = useState("00:00:00:000");
     const [showMessage, setShowMessage] = useState(false);
     const buttonsDisplay = useRef({
         start:true,
@@ -85,6 +85,11 @@ const ListItem = (props)=>{
         buttonsDisplay.current.save = false; 
         props.messageToast();
     };
+    const meliSecond = ()=>{
+        const milli = new Date();
+        milli.setMilliseconds(totalTime);
+        return milli;
+    };
     return(<>
         {showMessage && <Modal>
             <RerunMessage closeModal={()=>setShowMessage(false)} confirmReRun={()=>confirmReRun} label="Confirm" message="Could you please confirm that you want to run the rider?"/>
@@ -99,12 +104,15 @@ const ListItem = (props)=>{
                 </div> 
                 <div className="w-full">
                     <center className="text-xs">{props.item.name}</center>
-                    <div className="flex justify-center">
-                        <span>{("0" + Math.floor((totalTime / 60000) % 60)).slice(-2)}:</span>
-                        <span>{("0" + Math.floor((totalTime / 1000) % 60)).slice(-2)}:</span>
+                    <div className="flex justify-center font-mono">
+                        <span className="w-8 text-center">{("0" + Math.floor((totalTime / 60000) % 60)).slice(-2)}:</span>
+                        <span className="w-8 text-center">{("0" + Math.floor((totalTime / 1000) % 60)).slice(-2)}:</span>
                         {/* <span>{("0" + ((totalTime / 10) % 100)).slice(-2)}</span>  */}
-                        <span>{stringPadding(Math.floor((totalTime / 10) % 100),2)}</span>
-                    </div>
+                        {/* <span>{stringPadding(Math.floor((totalTime / 10) % 100),2)}</span> */}
+                        <span className="w-8 text-center">{meliSecond().getMilliseconds()}</span>
+                        
+                        
+                    </div> 
                 </div>
                 <div className="flex gap-2 justify-center pr-2"> 
                     {buttonsDisplay.current.start &&

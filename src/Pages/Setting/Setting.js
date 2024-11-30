@@ -30,7 +30,7 @@ const Setting = ()=>{
 
     React.useEffect(()=>{
         if(stages){
-            setCurrentStage(stages[0].id);
+            setCurrentStage(stages[0]?.id);
         }
     },[stages]);
 
@@ -60,7 +60,7 @@ const Setting = ()=>{
             "finishedTime", 
             "totalTime", 
         ]];
-        let arrangeExportData = stagesFinished.map(count => Object.assign(
+        let arrangeExportData = stagesFinished?.map(count => Object.assign(
             {   rider_id:count.rider_id, 
                 rider_number:count.rider_number,
                 stage:count.stage, 
@@ -85,7 +85,7 @@ const Setting = ()=>{
                 ...stageName]];
         
         const wb = utils.book_new();
-        let check = categories.map((cat,index)=>{
+        let check = categories?.map((cat,index)=>{
             let arrangeExportData = TotalTime(ridersParticipants,stagesFinished,cat.id,parseInt(currentStage)).map((rider, riderIndex) => {
                 // Dynamically add stages
                 let stagesData = stages.reduce((acc, stage) => {

@@ -6,6 +6,7 @@ import Category from "../Pages/Category/Category";
 import Stages from "../Pages/Stages/Stages";
 import Participants from "../Pages/Participants/Participants";
 import Results from "../Pages/Participants/Results";
+import NewTabResults from "../Pages/Participants/NewTabResults";
 
 const routes = [
     {
@@ -65,6 +66,15 @@ const routes = [
     {
         path: "/results",
         component: ()=> <Results/>,
+        title: "Results",
+        layout: "default",
+        access: {
+            global: true,
+        },   
+    },
+    {
+        path: "/new-tab-results",
+        component: ()=> <NewTabResults/>,
         title: "Results",
         layout: "default",
         access: {

@@ -13,6 +13,7 @@ import TableBody from "../../components/Table/TableBody";
 import TableHead from "../../components/Table/TableHead";
 import TableCell from "../../components/Table/TableCell";
 import { nameCustomize } from "../../util/helper";
+// import { Link } from "react-router-dom";
 
 const ResultModal = (props)=>{
     
@@ -196,7 +197,25 @@ const ResultModal = (props)=>{
                         </div>
                     </label>
                 </div> */}
-                {/* <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white text-xs" onClick={handlerResult}>Results</button> */}
+                {/* <Link 
+                    to="/new-tab-results" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                > */}
+                <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-blue-500 text-white text-xs" onClick={async()=>{
+                   
+                    if (window.windowControlsOverlay) {
+                        const newWindow =  window.open("/new-tab-results", "_blank", "noopener,noreferrer");
+                        if (!newWindow) {
+                            console.log("Failed to open new window in PWA mode.");
+                        }
+                    } else {
+                        console.log("Multi-window mode is not supported in this environment.");
+                        window.open("/new-tab-results", "_blank", "noopener,noreferrer");
+                    }
+                }}>New Tab Results</button>
+                {/* </Link> */}
+                
             </div>
             <div className="flex md:gap-4 gap-1 mt-2 md:px-6 px-1">
                 <div className="flex w-full">

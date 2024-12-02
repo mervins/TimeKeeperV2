@@ -1,0 +1,20 @@
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%; /* Adjust based on your layout */
+}
+
+.marquee {
+  display: flex;
+  animation: marquee 30s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}

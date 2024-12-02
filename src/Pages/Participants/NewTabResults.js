@@ -13,6 +13,10 @@ import StageController from "../../data/stageController";
 import { TotalTime } from "../../data/stagesController";
 import Stages from "../../data/stagesController";
 import NumberToTime from "../../components/NumberToTime";
+import PastilNiBabo from "../../assets/pastilNiBabo.png";
+import Adlai from "../../assets/adlai.png";
+// import Misty from "../../assets/misty.png";
+import "./newTabResult.css";
 
 const NewTabResults = ()=>{
     let categoryServer = CategoryContrller();
@@ -23,7 +27,7 @@ const NewTabResults = ()=>{
     let headers = ["Top","Race #","Name"];
     const [currentStage,setCurrentStage] = useState(null); 
 
-    
+    const sponsored = ["Powered by","Powered by","Powered by","Powered by","Powered by","Powered by",];
     useEffect(() => {
         if (typeof categoryServer != "undefined") { 
             setCatID(categoryServer[0]); 
@@ -44,10 +48,38 @@ const NewTabResults = ()=>{
     [catID?.id,currentStage,stagesFinished]);  
     return (<>
         <div>
-            <div className="border-b border-slate-400">
-                <div className="p-4 font-bold text-xl text-yellow-600">
-                    Live Results
-                </div> 
+            <div className="relative border-b border-slate-400 flex items-center py-2 marquee-container">
+                <div className=" flex items-center marquee">
+                    <div className="p-4 font-bold text-xl text-yellow-600">
+                        Live Results
+                    </div>
+                    <div className="font-bold text-xl">
+                        Powered by:
+                    </div> 
+                    {
+                        sponsored.map((item,indx)=>{
+                            return <div key={indx} className="relative flex items-center gap-1 ">
+                                
+                                <div>
+                                    <img className="w-full" src={Adlai}/>
+                                </div> 
+                                <dv className="flex">
+                                    <img className="h-10/12" src={PastilNiBabo}/>
+                                </dv>
+                                {/* <div className="font-bold text-xl bg-[#e8f2fe] rounded-md">
+                                    Misty Mountain Heaven
+                                </div>  */}
+                                {/* <dv className="flex">
+                                    <img className="h-8/12" src={Misty}/>
+                                </dv> */}
+                            </div>;
+                        })
+                    }
+                    <div className="p-4 font-bold text-xl text-yellow-600">
+                        Live Results
+                    </div> 
+                </div>
+                
             </div>
             <div className="bg-white rounded-md m-0 2md:m-4 h-[88vh] overflow-y-auto">
                 <div className="container mx-auto">

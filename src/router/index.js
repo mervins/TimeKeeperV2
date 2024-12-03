@@ -30,7 +30,7 @@ const RouterComponents = ()=>{
     }, [listToast]);
     const listItem = listToast.map((toast, i) =>    {
         return (
-            <Toast key={i} toast={toast} position="top-left"></Toast>
+            <Toast key={i} toast={toast} position="top-right"></Toast>
         );
     }        
     );

@@ -24,10 +24,31 @@ export const DeleteAllStages = async() => {
     await db.stages.clear();
 };
 
-export const DeleteRiderFinished = async(id) => {
+export const DeleteRiderFinished = async (id, rider_id, stage_id) => {
+    // Delete the stage from the database
     await db.stages.delete(id);
+
+    // Update the rider's stages
+    await db.riders
+        .where("id")
+        .equals(rider_id)
+        .modify(rider => {
+            if (rider.status && Array.isArray(rider.status)) {
+                rider.status = rider.status.map(stage => {
+                    if (stage.stage_id === stage_id) {
+                        return {
+                            ...stage,
+                            status: "WAITING"
+                        };
+                    }
+                    return stage;
+                });
+            }
+        });
+
     return true;
 };
+
 
 export const FilterPerStage = ()=>{
     // let rider = Riders.filter(item => item);

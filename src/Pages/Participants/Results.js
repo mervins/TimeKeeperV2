@@ -1,6 +1,6 @@
 
 import Sidebar from "../../components/Layout/Sidebar";
-import React,{useState,useEffect,useMemo} from "react";
+import React,{useState,useEffect,useMemo,useContext} from "react";
 import CategoryContrller from "../../data/categoryController";
 import TableContainer from "../../components/Table/TableContainer";
 import Table from "../../components/Table/Table";
@@ -16,6 +16,9 @@ import Stages from "../../data/stagesController";
 import NumberToTime from "../../components/NumberToTime";
 import { ButtonIcon } from "../../components/Button";
 import { Cycle } from "../../components/Icons/Icons";
+import { useDialogHook } from "../../util/customehooks";
+import DeleteStageRun from "../../components/Modal/Delete/DeleteStageRun";
+import { TimerContext } from "../../context/TimerContext";
 
 const Results = ()=>{
     let categoryServer = CategoryContrller();
@@ -25,7 +28,18 @@ const Results = ()=>{
     let stagesFinished = Stages(); 
     let headers = ["Top","Race #","Name"];
     const [currentStage,setCurrentStage] = useState(null); 
+    const reRun = useDialogHook(DeleteStageRun);
+    
+    const {showToast} = useContext(TimerContext);
 
+    const reRunHandler = (stage) => {
+        reRun({stage:stage},(callback)=>{
+            if(callback.success){
+                showToast("success","Participant Run Again","Successfully");
+            }
+            
+        });
+    };
     
     useEffect(() => {
         if (typeof categoryServer != "undefined") { 
@@ -44,7 +58,7 @@ const Results = ()=>{
     const filteringCagtegory = useMemo(() => categoryServer ? 
         TotalTime(ridersParticipants,stagesFinished,catID?.id,currentStage) 
         : [],
-    [catID?.id,currentStage]);  
+    [catID?.id,currentStage,stagesFinished]);  
     return (<>
         <Sidebar>
             <div>
@@ -143,7 +157,7 @@ const Results = ()=>{
                                                                                         serverStg.id === stage.stage_id &&
                                                                                             <div className="flex gap-4 items-center justify-center">
                                                                                                 <NumberToTime key={key} stages={stage}/>
-                                                                                                <div className="text-red-500 cursor-pointer" ><ButtonIcon title="End" Icon={<Cycle/>}></ButtonIcon></div>
+                                                                                                <div className="text-red-500 cursor-pointer" onClick={()=>reRunHandler(stage)}><ButtonIcon title="End" Icon={<Cycle/>}></ButtonIcon></div>
                                                                                             </div>
                                                                                     }
                                                                                     
@@ -156,7 +170,9 @@ const Results = ()=>{
                                                         }
 
                                                         <TableCell className="py-2 px-2 text-[12px] text-black text-center hidden sm:inline">
-                                                            Penalty
+                                                            <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-red-500 text-white text-xs">
+                                                                Penalty
+                                                            </button>
                                                         </TableCell> 
                                                 
                                                     </tr> 

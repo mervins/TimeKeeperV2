@@ -1,4 +1,4 @@
-import { FcAlarmClock,FcSportsMode ,FcLandscape,FcMindMap, FcServices,FcHome  } from "react-icons/fc";
+import { FcAlarmClock,FcSportsMode ,FcLandscape,FcMindMap, FcServices,FcHome,FcStatistics } from "react-icons/fc";
 import { NavLink } from "react-router-dom";
 import { motion,AnimatePresence  } from "framer-motion"; 
 import React from "react";
@@ -61,7 +61,7 @@ const Sidebar = ({children})=>{
             path: "/stages"
         },
         {
-            icon:<FcLandscape className="text-2xl"/>,
+            icon:<FcStatistics className="text-2xl"/>,
             label: "Results",
             path: "/results"
         },

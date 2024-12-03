@@ -116,19 +116,20 @@ const ListItem = (props)=>{
                 </div>
                 <div className="flex gap-2 justify-center pr-2"> 
                     {buttonsDisplay.current.start &&
-                        <div className="text-green-500" onClick={playHandle}><ButtonIcon title="Start" Icon={<Play/>}></ButtonIcon></div> 
+                        <div className="text-green-500 cursor-pointer" onClick={playHandle}><ButtonIcon title="Start" Icon={<Play/>}></ButtonIcon></div> 
                     }
                     {
                         buttonsDisplay.current.end &&
-                        <div className="text-red-500" onClick={stopHandler}><ButtonIcon title="End" Icon={<Stop/>}></ButtonIcon></div>
+                        <div className="text-red-500 cursor-pointer" onClick={stopHandler}><ButtonIcon title="End" Icon={<Stop/>}></ButtonIcon></div>
+                    }
+                    
+                    {
+                        buttonsDisplay.current.save &&  
+                    <div className="text-blue-500 cursor-pointer" onClick={() => {saveHandler();}}><ButtonIcon title="Save" Icon={<Save/>}></ButtonIcon></div>   
                     }
                     {
                         buttonsDisplay.current.save && 
-                        <div className="text-orange-400" onClick={rerunHandler}><ButtonIcon title="Rerun" Icon={<Cycle/>}></ButtonIcon></div> 
-                    }
-                    {
-                        buttonsDisplay.current.save &&  
-                    <div className="text-blue-500" onClick={() => {saveHandler();}}><ButtonIcon title="Save" Icon={<Save/>}></ButtonIcon></div>   
+                        <div className="text-orange-400 cursor-pointer" onClick={rerunHandler}><ButtonIcon title="Rerun" Icon={<Cycle/>}></ButtonIcon></div> 
                     }
                 </div>
             </div>  

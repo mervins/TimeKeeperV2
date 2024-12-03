@@ -14,6 +14,8 @@ import StageController from "../../data/stageController";
 import { TotalTime } from "../../data/stagesController";
 import Stages from "../../data/stagesController";
 import NumberToTime from "../../components/NumberToTime";
+import { ButtonIcon } from "../../components/Button";
+import { Cycle } from "../../components/Icons/Icons";
 
 const Results = ()=>{
     let categoryServer = CategoryContrller();
@@ -103,6 +105,9 @@ const Results = ()=>{
                                                     );
                                                 })
                                             }
+                                            <TableHead className="text-center hidden sm:inline">
+                                                Action
+                                            </TableHead> 
                                         </tr>
                                     </thead>
                                     <TableBody> 
@@ -124,7 +129,7 @@ const Results = ()=>{
                                                                 {nameCustomize(result.name)} 
                                                             </span>
                                                         </TableCell>  
-                                                        <TableCell className="py-2 px-2 text-[12px] text-black text-center hidden sm:inline">
+                                                        <TableCell className="py-2 px-2 text-[12px] text-black text-center hidden sm:flex items-center">
                                                             {catID?.name || ""}
                                                         </TableCell> 
                                                         {
@@ -136,7 +141,10 @@ const Results = ()=>{
                                                                                 <> 
                                                                                     {
                                                                                         serverStg.id === stage.stage_id &&
-                                                                                            <NumberToTime key={key} stages={stage}/>
+                                                                                            <div className="flex gap-4 items-center justify-center">
+                                                                                                <NumberToTime key={key} stages={stage}/>
+                                                                                                <div className="text-red-500 cursor-pointer" ><ButtonIcon title="End" Icon={<Cycle/>}></ButtonIcon></div>
+                                                                                            </div>
                                                                                     }
                                                                                     
                                                                                 </>
@@ -146,6 +154,10 @@ const Results = ()=>{
                                                                 </TableCell>;
                                                             })
                                                         }
+
+                                                        <TableCell className="py-2 px-2 text-[12px] text-black text-center hidden sm:inline">
+                                                            Penalty
+                                                        </TableCell> 
                                                 
                                                     </tr> 
                                                 );

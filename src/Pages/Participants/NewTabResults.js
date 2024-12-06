@@ -163,10 +163,10 @@ const NewTabResults = ()=>{
                                                             
                                                         </div>
                                                     </TableCell>  
-                                                    <TableCell className={`py-2 px-2 text-[16px] text-black text-center ${key < 10 ? "bg-[#103754] font-bold text-white" : "text-black"}`}>
+                                                    <TableCell className={`py-2 px-2 text-[16px] text-center ${key < 10 ? "bg-[#103754] font-bold text-white" : "text-black"}`}>
                                                         {result.number}
                                                     </TableCell>  
-                                                    <TableCell className={`py-2 px-2 text-[16px] text-black text-center ${key < 10 ? "bg-[#103754] font-bold text-white" : "text-black"}`}>
+                                                    <TableCell className={`py-2 px-2 text-[16px] text-center ${key < 10 ? "bg-[#103754] font-bold text-white" : "text-black"}`}>
                                                         <span className="hidden sm:inline">
                                                             {result.name}
                                                         </span>
@@ -174,7 +174,7 @@ const NewTabResults = ()=>{
                                                             {nameCustomize(result.name)} 
                                                         </span>
                                                     </TableCell>  
-                                                    <TableCell className={` py-2 px-2 text-[16px] text-black text-center hidden sm:flex items-center ${key < 10 ? "bg-[#103754] font-bold text-white" : "text-black"}`}>
+                                                    <TableCell className={` py-2 px-2 text-[16px] text-center hidden sm:flex items-center ${key < 10 ? "bg-[#103754] font-bold text-white" : "text-black"}`}>
                                                         {catID?.name || ""}
                                                     </TableCell> 
                                                     {

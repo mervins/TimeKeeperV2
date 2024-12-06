@@ -19,12 +19,16 @@ import CategoryPage from "./ModalMainPage/Category";
 import StagesPage from "./ModalMainPage/StagesPage";
 import StageController, {GetStage} from "../data/stageController";
 import CategoryContrller from "../data/categoryController";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { TimerContext } from "../context/TimerContext";
+import { useDialogHook } from "../util/customehooks";
+import GoToDashboard from "../components/Modal/General/LeaveTimer";
+import { useHistory } from "react-router-dom";
 
 const MainPage = ()=>{  
     let categoryServer = CategoryContrller();
     let stageServer = StageController();  
+    let dashboardDialog = useDialogHook(GoToDashboard);
     let {showToast} = useContext(TimerContext);
     const [currentCategory,setCurrentCategory] = useState([]);
     const [currentStage,setCurrentStage] = useState();  
@@ -43,7 +47,10 @@ const MainPage = ()=>{
     let stagesFinished = Stages(); 
     let isPageWide = useMediaQuery("(min-width: 900px)"); 
 
-
+    const history = useHistory();
+    const goToDashClick = () => {
+        history.push("/participants");
+    };
     useEffect(() => {
         if (typeof categoryServer != "undefined") { 
             setCurrentCategory(categoryServer[0]?.id);
@@ -111,6 +118,14 @@ const MainPage = ()=>{
         return detailStage;
     };
 
+    const goToDash = ()=>{
+        dashboardDialog({goToDash:goToDashClick}).then(callback =>{
+            if(callback.success){
+                showToast("Redirect");
+            }
+        });
+    };
+
     return (<> 
         <Mobile 
             currentCategory={currentCategory} 
@@ -153,12 +168,12 @@ const MainPage = ()=>{
                 <div>  
                 </div>
                 <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-5 gap-2 mt-4">
+                    <div className="flex flex-wrap gap-4 mt-4">
                         {
                             ridersParticipants?.map((item,index)=>{
                                 return(
-                                    <div key={index} className={(jsonParserStatus(item.status,StatusRider.WAITING) && jsonParserStatus(item.status,StatusRider.FINISHED)) ? "relative" : "hidden"}>
-                                        <div className="absolute z-20 -top-1 -left-2 bg-red-500 rounded-full text-white cursor-pointer" onClick={()=>removeRunner(item,StatusRider.WAITING)}> <Close/></div>
+                                    <div key={index} className={(jsonParserStatus(item.status,StatusRider.WAITING) && jsonParserStatus(item.status,StatusRider.FINISHED)) ? "relative w-full sm:w-auto" : "hidden"}>
+                                        <button className="absolute z-20 -top-1 -left-2 bg-red-500 rounded-full text-white cursor-pointer" onClick={()=>removeRunner(item,StatusRider.WAITING)}> <Close/></button>
                                         <ListItem item={{...item,stage:currentStage}} showWarning={()=>setShowModal({...showModal, showRerun:true})} messageToast={()=>{showToast("success","The record of the rider has been saved","Successfully");}} ></ListItem>
                                     </div>
                                 );
@@ -214,7 +229,7 @@ const MainPage = ()=>{
             <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showAddRider:true})}><AddUser/><div>Participants</div></button>
             <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}><Trophy/><div>Result</div></button>
             <button className="col-span-2 flex justify-center items-center flex-col text-xs"  onClick={()=>setShowModal({...showModal, showStages:true})}><Stage/><div>Stage</div></button>
-            {isPageWide ? <Link to="/participants" className="col-span-2 flex justify-center items-center flex-col text-xs"><Setting/><div>Dashboard</div></Link> : 
+            {isPageWide ? <div className="col-span-2 flex justify-center items-center flex-col text-xs cursor-pointer" onClick={goToDash}><Setting/><div>Dashboard</div></div> : 
                 <button onClick={()=>setShowModal({...showModal, showNavBar:true})} className="col-span-2 flex justify-center items-center flex-col text-xs" ><Menu/><div>Menu</div></button>
             }
             

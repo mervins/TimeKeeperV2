@@ -94,8 +94,8 @@ const ListItem = (props)=>{
         {showMessage && <Modal>
             <RerunMessage closeModal={()=>setShowMessage(false)} confirmReRun={()=>confirmReRun} label="Confirm" message="Could you please confirm that you want to run the rider?"/>
         </Modal>} 
-        <div className="relative">   
-            <div className="border py-2 text-black font-bold shadow-md flex items-center rounded-lg bg-white"> 
+        <div className="relative w-full">   
+            <div className="border py-2 text-black font-bold shadow-md flex items-center rounded-lg bg-white w-full"> 
                 <div className="pl-1"><center className="text-xs ">Rider</center>
                     <div className="flex items-center">
                         <div>#</div>

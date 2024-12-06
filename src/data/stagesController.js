@@ -190,4 +190,17 @@ const calculateTotal = (collectTime,rider_id,name)=>{
     };
 };
 
+
+export const updateStageInfo = async (id,details) => { 
+    console.log("=========Update Stage Info==============");
+    console.log(id);
+    console.log(details);
+    await db.stages
+        .where("id")
+        .equals(id)
+        .modify(stage => {
+            Object.assign(stage, details);
+        }); 
+};
+
 export default Stages;

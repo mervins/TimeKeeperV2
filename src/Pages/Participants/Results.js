@@ -19,6 +19,7 @@ import { Cycle } from "../../components/Icons/Icons";
 import { useDialogHook } from "../../util/customehooks";
 import DeleteStageRun from "../../components/Modal/Delete/DeleteStageRun";
 import { TimerContext } from "../../context/TimerContext";
+import PenaltyRider from "../../components/Modal/General/PenaltyRider";
 
 const Results = ()=>{
     let categoryServer = CategoryContrller();
@@ -29,7 +30,7 @@ const Results = ()=>{
     let headers = ["Top","Race #","Name"];
     const [currentStage,setCurrentStage] = useState(null); 
     const reRun = useDialogHook(DeleteStageRun);
-    
+    const penaltyDialog = useDialogHook(PenaltyRider);
     const {showToast} = useContext(TimerContext);
 
     const reRunHandler = (stage) => {
@@ -53,6 +54,15 @@ const Results = ()=>{
             console.log(stageServer);
         }
     }, [stageServer]);
+
+    const penaltyHandler = (item)=>{
+        console.log(item);
+        penaltyDialog({stageServer:item.stages},(callback)=>{
+            if(callback.success){
+                showToast("success","Participant Penalty","Successfully");
+            }
+        });
+    };
 
 
     const filteringCagtegory = useMemo(() => categoryServer ? 
@@ -170,7 +180,7 @@ const Results = ()=>{
                                                         }
 
                                                         <TableCell className="py-2 px-2 text-[12px] text-black text-center hidden sm:inline">
-                                                            <button className="p-2 border rounded-md bg-white shadow-md cursor-pointer bg-red-500 text-white text-xs">
+                                                            <button className="p-2 border rounded-md shadow-md cursor-pointer bg-red-500 text-white text-xs" onClick={()=>penaltyHandler(result)}>
                                                                 Penalty
                                                             </button>
                                                         </TableCell> 

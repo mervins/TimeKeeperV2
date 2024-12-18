@@ -1,5 +1,4 @@
 import React, { useState, useRef } from "react";
-import { FcAlarmClock } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import BG from "../../assets/bg.webp";
 import ABOUT from "../../assets/about.webp";
@@ -11,6 +10,7 @@ import Step2Image from "../../assets/step2.webp";
 import Step3Image from "../../assets/stage3.webp";
 import Step4Image from "../../assets/stage4.webp";
 import Step5Image from "../../assets/stage5.webp";
+import mainLogo from "../../assets/logo.png";
 import "./home.css";
 
 export default function Home() {
@@ -51,18 +51,17 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-white">
             {/* Navigation */}
-            <nav className="fixed w-full z-50 bg-black/90 backdrop-blur-sm">
+            <nav className="fixed w-full z-50 bg-white backdrop-blur-sm shadow-md">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-center md:justify-between h-16">
-                        <div className="flex items-center hidden md:flex">
-                            <FcAlarmClock className="h-8 w-8 text-white" />
-                            <span className="ml-2 text-white text-xl font-bold">Time System</span>
+                    <div className="flex items-center  md:justify-between h-16">
+                        <div className="relative w-[10%]">
+                            <img src={mainLogo}/>
                         </div>
                         <div className="">
-                            <div className="flex items-center space-x-8">
-                                <a  className="text-gray-300 hover:text-white cursor-pointer" onClick={() => scrollToSection(homeRef)}>Home</a>
-                                <a  className="text-gray-300 hover:text-white cursor-pointer" onClick={() => scrollToSection(featuresRef)}>About</a>
-                                <a  className="text-gray-300 hover:text-white cursor-pointer" onClick={() => scrollToSection(gettingStartedRef)}>Todo</a>
+                            <div className="flex items-center space-x-8 ">
+                                <a  className=" font-semibold cursor-pointer text-[#2f2051]" onClick={() => scrollToSection(homeRef)}>Home</a>
+                                <a  className="font-semibold cursor-pointer text-[#2f2051]" onClick={() => scrollToSection(featuresRef)}>About</a>
+                                <a  className=" font-semibold cursor-pointer text-[#2f2051]" onClick={() => scrollToSection(gettingStartedRef)}>Todo</a>
                                 <Link to="/participants" className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-md">
                                     Explore
                                 </Link>

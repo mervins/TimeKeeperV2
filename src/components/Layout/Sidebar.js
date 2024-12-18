@@ -4,6 +4,7 @@ import { motion,AnimatePresence  } from "framer-motion";
 import React from "react";
 import {  Close } from "../../components/Icons/Icons";
 import { FaBars } from "react-icons/fa";
+import mainLogo from "../../assets/logo.png";
 
 const backdrop = {
     visible:{opacity:1},
@@ -92,10 +93,10 @@ const Sidebar = ({children})=>{
                     <div className="h-screen bg-gray-50 border-r border-gray-200 flex flex-col justify-between">
                         {/* Logo and Top Section */}
                         <div>
-                            <div className="flex items-center px-6 py-3 gap-2">
+                            <div className="flex items-center justify-center px-6 py-3 gap-2">
                                 {/* <img src="logo.png" alt="Zendenta Logo" className="h-8 w-8 mr-2" /> */}
-                                <FcAlarmClock className="h-8 w-8 text-white" />
-                                <span className="text-xl font-bold text-yellow-500 text-center">Dashboard</span>
+                                <img src={mainLogo} className="w-[75%]"/>
+                                {/* <div className="text-xl font-bold text-yellow-500 text-center">Dashboard</div> */}
                             </div>
                             <nav className="mt-2">
                                 <ul>

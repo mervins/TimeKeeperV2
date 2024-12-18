@@ -24,12 +24,15 @@ import { TimerContext } from "../context/TimerContext";
 import { useDialogHook } from "../util/customehooks";
 import GoToDashboard from "../components/Modal/General/LeaveTimer";
 import { useHistory } from "react-router-dom";
+import mainLogo from "../assets/logo.png";
+import { FcSelfServiceKiosk  } from "react-icons/fc";
+
 
 const MainPage = ()=>{  
     let categoryServer = CategoryContrller();
     let stageServer = StageController();  
     let dashboardDialog = useDialogHook(GoToDashboard);
-    let {showToast} = useContext(TimerContext);
+    let {showToast,prepareToStop,toggleCard,positionId} = useContext(TimerContext);
     const [currentCategory,setCurrentCategory] = useState([]);
     const [currentStage,setCurrentStage] = useState();  
     const [showModal, setShowModal] = useState({
@@ -46,11 +49,13 @@ const MainPage = ()=>{
     let ridersParticipants = Riders();
     let stagesFinished = Stages(); 
     let isPageWide = useMediaQuery("(min-width: 900px)"); 
+    
 
     const history = useHistory();
     const goToDashClick = () => {
         history.push("/participants");
     };
+
     useEffect(() => {
         if (typeof categoryServer != "undefined") { 
             setCurrentCategory(categoryServer[0]?.id);
@@ -95,6 +100,11 @@ const MainPage = ()=>{
         let getStage = stages.filter(stage => stage.stage == currentStage?.name); 
         return getStage[0]?.status != status; 
     };
+    
+
+    // const filteredData = ridersParticipants?.filter((item) =>
+    //     item.status.some((status) => status.status === "ONBOARD" || status.status === "RERUN")
+    // );
 
     // const DeleteAllTables = ()=>{
     //     let text = "Click OK to delete all datas?";
@@ -127,6 +137,11 @@ const MainPage = ()=>{
     };
 
     return (<> 
+        <div className="bg-white">
+            <div className="relative w-32 p-4">
+                <img src={mainLogo}/>
+            </div>
+        </div>
         <Mobile 
             currentCategory={currentCategory} 
             currentStage={currentStage} 
@@ -165,16 +180,30 @@ const MainPage = ()=>{
             </Modal>}
 
             <div className="border grow p-1 overflow-y-auto h-[95vh] bg-[#E4E9F2]">
-                <div>  
-                </div>
                 <div className="container mx-auto px-4">
                     <div className="flex flex-wrap gap-4 mt-4">
                         {
-                            ridersParticipants?.map((item,index)=>{
+                            ridersParticipants?.map((item)=>{
                                 return(
-                                    <div key={index} className={(jsonParserStatus(item.status,StatusRider.WAITING) && jsonParserStatus(item.status,StatusRider.FINISHED)) ? "relative w-full sm:w-auto" : "hidden"}>
-                                        <button className="absolute z-20 -top-1 -left-2 bg-red-500 rounded-full text-white cursor-pointer" onClick={()=>removeRunner(item,StatusRider.WAITING)}> <Close/></button>
-                                        <ListItem item={{...item,stage:currentStage}} showWarning={()=>setShowModal({...showModal, showRerun:true})} messageToast={()=>{showToast("success","The record of the rider has been saved","Successfully");}} ></ListItem>
+                                    <div key={item.id} className={(jsonParserStatus(item.status,StatusRider.WAITING) && jsonParserStatus(item.status,StatusRider.FINISHED)) ? "relative w-full sm:w-auto" : "hidden"}>
+                                        {
+                                            jsonParserStatus(item.status,StatusRider.RUNNING) && jsonParserStatus(item.status,StatusRider.TOUCHDOWN) &&
+                                            <button className="absolute z-20 -top-1 -left-2 bg-red-500 rounded-full text-white cursor-pointer" onClick={()=>removeRunner(item,StatusRider.WAITING)}> <Close/></button>
+                                        }
+                                        {
+                                            !jsonParserStatus(item.status,StatusRider.RUNNING) &&
+                                            <button className="absolute z-20 top-3 right-[62%] rounded-full text-white cursor-pointer text-2xl flex items-center gap-1"
+                                                onClick={()=>toggleCard(item.id)}> <FcSelfServiceKiosk /> <span className="text-rose-500 text-sm font-bold">{positionId(item.id)}</span></button>
+                                        }
+                                        <div className={`
+                                            ${(jsonParserStatus(item.status,StatusRider.RUNNING)) ? "" : "shadow-xl shadow-lg shadow-indigo-500/50 border-2 border-blue-500 rounded-md"}
+                                            ${prepareToStop.includes(item.id) && (!jsonParserStatus(item.status,StatusRider.RUNNING)) ? "border-2 border-rose-500 rounded-md" : ""}`}> 
+                                            <ListItem prepareToStop={prepareToStop} 
+                                                toggleCard={toggleCard}
+                                                item={{...item,stage:currentStage}} 
+                                                showWarning={()=>setShowModal({...showModal, showRerun:true})} 
+                                                messageToast={()=>{showToast("success","The record of the rider has been saved","Successfully");}} ></ListItem>
+                                        </div>
                                     </div>
                                 );
                             })
@@ -184,9 +213,6 @@ const MainPage = ()=>{
             </div>
             {isPageWide && <div className="border max-w-[350px] w-full "> 
                 <div className="mt-3 flex gap-3 justify-center items-center">
-                    {/* <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-blue-500 text-white" onClick={()=>setShowModal({...showModal, showResult:true})}>RANK</button>
-                    <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-orange-400 text-white" onClick={()=>setShowModal({...showModal, showImport:true})}>IMPORT</button>    */}
-                    {/* <button className="p-2 w-24 border rounded-md bg-white shadow-md cursor-pointer text-center bg-red-500 text-white" onClick={()=>DeleteAllTables()}>CLEAR</button> */}
                 </div>
                 <div className="mt-5 font-bold">
                     <Select items={stageServer} label="Stages" getValue={(value)=>{getStageList(value);}} currentSelect={currentStage?.id}/> 
@@ -195,9 +221,9 @@ const MainPage = ()=>{
                     <Select items={categoryServer} label="Category" getValue={value=>setCurrentCategory(value)} currentSelect={currentCategory}/>
                 </div>
                 <div className="mx-2 relative overflow-y-auto h-[70vh]">
-                    {filterCategory(currentCategory)?.map((item,index)=>{
+                    {filterCategory(currentCategory)?.map((item)=>{
                         return(
-                            <div key={index} className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through w-full shadow-md text-red-500 font-bold" : "no-underline w-full font-medium shadow-md"}>
+                            <div key={item.id} className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through w-full shadow-md text-red-500 font-bold" : "no-underline w-full font-medium shadow-md"}>
                                 <div className="flex border py-1 mb-1 px-1 rounded-md justify-between">
                                     <div className="col-span-5 ml-3"> 
                                         <div className={!jsonParserStatus(item.status,StatusRider.FINISHED) ? "line-through text-red-500 font-bold" : "no-underline font-bold"}>#{item.number} {getStatusStage(item.status)}</div>

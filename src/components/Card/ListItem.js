@@ -1,15 +1,20 @@
 import { ButtonIcon } from "../Button";
 import { Play,Stop,Cycle, Save } from "../Icons/Icons";
-import React, { useState, useEffect,useRef} from "react";
+import React, { useState, useEffect,useRef,useContext} from "react";
 import { UpdateRider } from "../../data/ridersController";
 import { StatusRider } from "../../data/DummyData";
 import { AddIndividualRiderFinished } from "../../data/stagesController";
 import Modal from "../Modal/Modal";
 import RerunMessage from "../../Pages/ModalMainPage/RerunMessage";
 // import stringPadding from "../../util/stringPadding";
+// import socketIO from "socket.io-client";
+// import { useSocket } from "../../context/TimerContext";
+import { TimerContext } from "../../context/TimerContext";
 
 const ListItem = (props)=>{
     const {number, stage, id} = props.item;
+    const prepareToStop = props.prepareToStop;
+    const {socketRef} = useContext(TimerContext);
     const [totalTime, setTotalTime] = useState(0);
     const [running, setRunning] = useState(false);
     const [getStartTime,setGetStartTime] = useState("00:00:00:000");
@@ -24,6 +29,42 @@ const ListItem = (props)=>{
     
     const interval = useRef();
     const startTime = useRef();
+    // const socketRef = useRef(null);
+    useEffect(() => {
+    
+        // const socket = socketIO.connect("http://localhost:4000");  // Make sure this matches your server URL
+        // socket.on("stopTimer", (data) => {
+        //     console.log(data);
+        //     if (id === prepareToStop[0] && running) {
+        //         stopHandler();
+        //         props.toggleCard(id);
+        //     }
+        // });
+    
+        // // Cleanup the socket connection on component unmount
+        // return () => {
+        //     socket.disconnect();
+        // };
+
+        if (!socketRef.current) return; // Wait for the socket to initialize
+
+        const handleStopTimer = (data) => {
+            console.log(data);
+            if (id === prepareToStop[0] && running) {
+                stopHandler();
+                props.toggleCard(id);
+            }
+        };
+
+        // Listen for the stopTimer event
+        socketRef.current.on("stopTimer", handleStopTimer);
+
+        // Cleanup
+        return () => {
+            socketRef.current.off("stopTimer", handleStopTimer);
+        };
+
+    }, [prepareToStop,id,running,socketRef.current]);
 
     useEffect(() => { 
         if (running) { 
@@ -95,15 +136,15 @@ const ListItem = (props)=>{
             <RerunMessage closeModal={()=>setShowMessage(false)} confirmReRun={()=>confirmReRun} label="Confirm" message="Could you please confirm that you want to run the rider?"/>
         </Modal>} 
         <div className="relative w-full">   
-            <div className="border py-2 text-black font-bold shadow-md flex items-center rounded-lg bg-white w-full"> 
-                <div className="pl-1"><center className="text-xs ">Rider</center>
+            <div className="border py-2 text-black font-bold shadow-md flex items-center rounded-lg bg-white w-full sm:w-64"> 
+                <div className="pl-1"><center className={`${prepareToStop.includes(id) && running ? "text-red-500" : "text-sx"} `}>Rider</center>
                     <div className="flex items-center">
                         <div>#</div>
-                        <div className="text-3xl text-yellow-500">{number}</div>
+                        <div className={`text-3xl ${prepareToStop.includes(id) && running ? "text-red-500" : "text-yellow-500"}`}>{number}</div>
                     </div>
                 </div> 
                 <div className="w-full">
-                    <center className="text-xs">{props.item.name}</center>
+                    <center className={`${prepareToStop.includes(id) && running ?"text-red-500 text-sx" : "text-sx"} `}>{props.item.name}</center>
                     <div className="flex justify-center font-mono">
                         <span className="w-8 text-center">{("0" + Math.floor((totalTime / 60000) % 60)).slice(-2)}:</span>
                         <span className="w-8 text-center">{("0" + Math.floor((totalTime / 1000) % 60)).slice(-2)}:</span>

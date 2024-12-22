@@ -1,6 +1,6 @@
-import React, { createContext, useState,useEffect,useRef,useContext } from "react";
+import React, { createContext, useState,useRef,useContext } from "react"; //useEffect
 import { toastProperties } from "../components/Toast/Toast";
-import socketIO from "socket.io-client";
+// import socketIO from "socket.io-client";
 // Create a Context
 export const TimerContext = createContext();
 
@@ -10,17 +10,17 @@ export const TimerProvider = ({ children }) => {
     const [prepareToStop, setToStop] = useState([]);
     const socketRef = useRef(null);
 
-    useEffect(() => {
-        // Initialize the socket connection
-        socketRef.current = socketIO.connect("http://localhost:4000");
+    // useEffect(() => {
+    //     // Initialize the socket connection
+    //     socketRef.current = socketIO.connect("http://localhost:4000");
 
-        // Cleanup on unmount
-        return () => {
-            if (socketRef.current) {
-                socketRef.current.disconnect();
-            }
-        };
-    }, []);
+    //     // Cleanup on unmount
+    //     return () => {
+    //         if (socketRef.current) {
+    //             socketRef.current.disconnect();
+    //         }
+    //     };
+    // }, []);
 
     const deleteToast = id => { 
         const toastListItem = listToast.findIndex(e => e.id === id); 

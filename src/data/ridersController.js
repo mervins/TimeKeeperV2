@@ -1,5 +1,6 @@
 import { db } from "./db";
 import { useLiveQuery } from "dexie-react-hooks";
+import { StatusRider } from "./DummyData";
 
 let Riders = () => {
     return useLiveQuery(
@@ -7,9 +8,15 @@ let Riders = () => {
     );
 };
 
+export const onboardDisplay = () => {
+    return useLiveQuery(
+        () => db.onboard.toArray()
+    );
+};
+
 export const AddIndividualRider = async(rider) => {
     let stage = await db.stageGroup.toArray();
-    let status = stage.map(item => Object.assign({stage:item.name,status:"WAITING", stage_id: item.id}));
+    let status = stage.map(item => Object.assign({stage:item.name,status:StatusRider.WAITING, stage_id: item.id}));
     console.log(status);
     console.log(rider);
     // await db.riders.add(rider);
@@ -17,7 +24,7 @@ export const AddIndividualRider = async(rider) => {
 
 export const AddMutipleRider = async (rows) => {
     let stage = await db.stageGroup.toArray();
-    let statusRider = stage.map(item =>Object.assign({stage:item.name,status:"WAITING",stage_id: item.id}));
+    let statusRider = stage.map(item =>Object.assign({stage:item.name,status:StatusRider.WAITING,stage_id: item.id,rank:null}));
     let riders = rows.map(rider => Object.assign(rider,{status:statusRider}));
     console.log(riders);
     await db.riders.bulkAdd(riders);
@@ -25,6 +32,19 @@ export const AddMutipleRider = async (rows) => {
 
 export const UpdateRider = async(details, status,stage) => {
     console.log(stage);
+    let statusRider = [StatusRider.ONBOARD, StatusRider.RUNNING, StatusRider.TOUCHDOWN,StatusRider.RERUN];
+    
+    const onboard = await db.onboard.where("index").equals(parseInt(details.id)).first();
+    
+    if(statusRider.includes(status)){
+        if(!onboard){
+            await db.onboard.add({index:details.id});
+        }
+    }else{
+        if(onboard){
+            await db.onboard.delete(onboard.id);
+        } 
+    }
     let updateStatus = await UpdateStingObjectStatus(details,status,stage);
     console.log({...details, status:updateStatus});
     await db.riders.put({...details, status:updateStatus});
@@ -43,7 +63,8 @@ export const UpdateStingObjectStatus = async(details,statusUpdate,stage) =>{
         // If it doesn't exist, add a new object
         const newStatus = {
             status: statusUpdate,
-            stage: stage.name
+            stage: stage.name,
+            rank:null
         };
         details.status.push(newStatus);
         return details.status;

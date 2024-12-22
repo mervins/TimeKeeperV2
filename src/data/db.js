@@ -6,6 +6,6 @@ db.version(1).stores({
     category: "++id, name",
     stageGroup:"++id, name",
     stages: "++id,stage_id,riders_id,riders_number,status, stage, startTime, finishedTime, totalTime",
-    settings:"++id,race_type,sensor,ranking,sort_stage, sort_rank", //sort_stage applicable for DH and sort_rank for fastes to slowest vice versa
+    settings:"++id,race_type,sensor,ranking,sort_stage, sort_rank,api_server", //sort_stage applicable for DH and sort_rank for fastes to slowest vice versa
     onboard:"++id,index"
 }); 

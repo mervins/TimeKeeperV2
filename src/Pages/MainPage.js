@@ -2,7 +2,7 @@ import { useState,useEffect,useRef,useContext } from "react";
 import ListItem from "../components/Card/ListItem";
 import { Close,Menu, AddUser,Setting, Category,Stage,Trophy, Trash} from "../components/Icons/Icons"; 
 import { StatusRider } from "../data/DummyData";
-import Riders, { UpdateRider,DeleteRider } from "../data/ridersController";
+import Riders, { UpdateRider,DeleteRider, onboardDisplay } from "../data/ridersController";
 import Stages from "../data/stagesController";
 import Modal from "../components/Modal/Modal";
 import ImportModal from "./ModalMainPage/ImportModal";
@@ -27,14 +27,14 @@ import { useHistory } from "react-router-dom";
 import mainLogo from "../assets/logo.png";
 import { FcSelfServiceKiosk  } from "react-icons/fc";
 
-
 const MainPage = ()=>{  
     let categoryServer = CategoryContrller();
     let stageServer = StageController();  
     let dashboardDialog = useDialogHook(GoToDashboard);
     let {showToast,prepareToStop,toggleCard,positionId} = useContext(TimerContext);
     const [currentCategory,setCurrentCategory] = useState([]);
-    const [currentStage,setCurrentStage] = useState();  
+    const [currentStage,setCurrentStage] = useState();
+    const [display,setDisplay] = useState([]);
     const [showModal, setShowModal] = useState({
         showImport:false,
         showResult:false,
@@ -47,14 +47,28 @@ const MainPage = ()=>{
     });
     let idRider = useRef();
     let ridersParticipants = Riders();
+    let onboardRiderDisplay = onboardDisplay();
     let stagesFinished = Stages(); 
     let isPageWide = useMediaQuery("(min-width: 900px)"); 
-    
 
     const history = useHistory();
     const goToDashClick = () => {
         history.push("/participants");
     };
+    
+    // let statusDis = [StatusRider.ONBOARD, StatusRider.RERUN,StatusRider.TOUCHDOWN,StatusRider.RUNNING];
+    useEffect(()=>{
+        if(ridersParticipants){
+            const onboardIndices = onboardRiderDisplay.map(item => item.index);
+            let onboradRider = ridersParticipants?.filter(item => onboardIndices.includes(item.id));
+            onboradRider.sort((a, b) => {
+                const indexA = onboardIndices.indexOf(a.id);
+                const indexB = onboardIndices.indexOf(b.id);
+                return indexA - indexB;
+            });
+            setDisplay(onboradRider);
+        }
+    },[ridersParticipants]);
 
     useEffect(() => {
         if (typeof categoryServer != "undefined") { 
@@ -101,9 +115,8 @@ const MainPage = ()=>{
         return getStage[0]?.status != status; 
     };
     
-
     // const filteredData = ridersParticipants?.filter((item) =>
-    //     item.status.some((status) => status.status === "ONBOARD" || status.status === "RERUN")
+    //     item.status.some(item.status.some((status) => statusDis.includes(status.stu)))
     // );
 
     // const DeleteAllTables = ()=>{
@@ -137,9 +150,19 @@ const MainPage = ()=>{
     };
 
     return (<> 
-        <div className="bg-white">
+        <div className="bg-white flex justify-between">
             <div className="relative w-32 p-4">
                 <img src={mainLogo}/>
+            </div>
+            <div className="bg-white h-[60px] hidden sm:flex space-x-8 text-black pr-8 font-semibold ">
+                <button className="col-span-2 flex justify-center items-center" onClick={()=>setShowModal({...showModal, showCategory:true})}><div>Category</div></button>
+                <button className="col-span-2 flex justify-center items-center" onClick={()=>setShowModal({...showModal, showAddRider:true})}><div>Participants</div></button>
+                <button className="col-span-2 flex justify-center items-center" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}><div>Result</div></button>
+                <button className="col-span-2 flex justify-center items-center"  onClick={()=>setShowModal({...showModal, showStages:true})}><div>Stage</div></button>
+                {isPageWide ? <div className="col-span-2 flex justify-center items-center flex-col cursor-pointer" onClick={goToDash}><div>Dashboard</div></div> : 
+                    <button onClick={()=>setShowModal({...showModal, showNavBar:true})} className="col-span-2 flex justify-center items-center flex-col text-xs" ><div>Menu</div></button>
+                }
+                
             </div>
         </div>
         <Mobile 
@@ -183,9 +206,9 @@ const MainPage = ()=>{
                 <div className="container mx-auto px-4">
                     <div className="flex flex-wrap gap-4 mt-4">
                         {
-                            ridersParticipants?.map((item)=>{
+                            display?.map((item)=>{
                                 return(
-                                    <div key={item.id} className={(jsonParserStatus(item.status,StatusRider.WAITING) && jsonParserStatus(item.status,StatusRider.FINISHED)) ? "relative w-full sm:w-auto" : "hidden"}>
+                                    <div key={item.id} className={(jsonParserStatus(item.status,StatusRider.WAITING) && jsonParserStatus(item.status,StatusRider.FINISHED)) ? "relative w-full sm:w-auto" : "relative w-full sm:w-auto"}>
                                         {
                                             jsonParserStatus(item.status,StatusRider.RUNNING) && jsonParserStatus(item.status,StatusRider.TOUCHDOWN) &&
                                             <button className="absolute z-20 -top-1 -left-2 bg-red-500 rounded-full text-white cursor-pointer" onClick={()=>removeRunner(item,StatusRider.WAITING)}> <Close/></button>
@@ -250,7 +273,7 @@ const MainPage = ()=>{
             <div>
             </div>  
         </div>
-        <div className="bottom-0 fixed bg-white w-full h-[60px] grid grid-cols-10 border-2">
+        <div className="bottom-0 fixed bg-white w-full h-[60px] grid sm:hidden grid-cols-10 border-2">
             <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showCategory:true})}><Category/><div>Category</div></button>
             <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showAddRider:true})}><AddUser/><div>Participants</div></button>
             <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}><Trophy/><div>Result</div></button>

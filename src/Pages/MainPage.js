@@ -59,7 +59,7 @@ const MainPage = ()=>{
     // let statusDis = [StatusRider.ONBOARD, StatusRider.RERUN,StatusRider.TOUCHDOWN,StatusRider.RUNNING];
     useEffect(()=>{
         if(ridersParticipants){
-            const onboardIndices = onboardRiderDisplay.map(item => item.index);
+            const onboardIndices = onboardRiderDisplay?.map(item => item.index);
             let onboradRider = ridersParticipants?.filter(item => onboardIndices.includes(item.id));
             onboradRider.sort((a, b) => {
                 const indexA = onboardIndices.indexOf(a.id);

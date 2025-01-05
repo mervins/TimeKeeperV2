@@ -25,6 +25,7 @@ export const TimerProvider = ({ children }) => {
         return () => {
             if (socketRef.current) {
                 socketRef.current.disconnect();
+                console.log("Socket disconnected.");
             }
         };
     }, []);

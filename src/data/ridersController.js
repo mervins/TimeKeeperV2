@@ -38,7 +38,7 @@ export const UpdateRider = async(details, status,stage) => {
     
     if(statusRider.includes(status)){
         if(!onboard){
-            await db.onboard.add({index:details.id});
+            await db.onboard.add({index:details.id,startTime:null});
         }
     }else{
         if(onboard){
@@ -48,6 +48,63 @@ export const UpdateRider = async(details, status,stage) => {
     let updateStatus = await UpdateStingObjectStatus(details,status,stage);
     console.log({...details, status:updateStatus});
     await db.riders.put({...details, status:updateStatus});
+};
+
+export const updateTimeRelease = async (firstRiderStartTime, interval)=>{
+    console.log("==========Set TIME==============");
+    console.log(firstRiderStartTime);
+    console.log(interval);
+    let onboardRider = await db.onboard.toArray();
+
+    if (!onboardRider.length) return;
+    const intervalMs = interval * 1000;
+  
+    // Update riders list in memory
+    const updatedRiders = onboardRider.map((rider, index) => {
+        const startTime = new Date(firstRiderStartTime).getTime() + index * intervalMs;
+        return { ...rider, startTime: new Date(startTime).toISOString() };
+    });
+    // Update Dexie.js in bulk
+    await db.transaction("rw", db.onboard, async () => {
+        for (const rider of updatedRiders) {
+            await db.onboard.update(rider.id, { startTime: rider.startTime });
+        }
+    });
+};
+
+export const timeReleaseStage = async (firstRiderStartTime, interval,stageId,catId)=>{
+    console.log("==========Set TIME==============");
+    console.log(firstRiderStartTime);
+    console.log(interval);
+    console.log(stageId);
+    console.log(catId);
+    let riders = await db.riders.toArray();
+
+    if (!riders.length) return;
+    const intervalMs = interval * 1000;
+  
+    // Update riders list in memory
+    const updatedRiders = riders
+        .filter((rider) => rider.category_id === parseInt(catId))
+        .map((rider, index) => {
+            const startTime = new Date(firstRiderStartTime).getTime() + index * intervalMs;
+            const updatedStages = rider.status.map((stage) => {
+                if (stage.stage_id === stageId) {
+                    return { ...stage, start_time: new Date(startTime).toISOString() };
+                }
+                return stage;
+            });
+            return {
+                ...rider, 
+                status: updatedStages,
+            };
+        });
+    // Update Dexie.js in bulk
+    await db.transaction("rw", db.riders, async () => {
+        for (const rider of updatedRiders) {
+            await db.riders.update(rider.id, { status: rider.status });
+        }
+    });
 };
 
 export const UpdateStingObjectStatus = async(details,statusUpdate,stage) =>{ 

@@ -2,7 +2,7 @@ import { useState,useEffect,useRef,useContext } from "react";
 import ListItem from "../components/Card/ListItem";
 import { Close,Menu, AddUser,Setting, Category,Stage,Trophy, Trash} from "../components/Icons/Icons"; 
 import { StatusRider } from "../data/DummyData";
-import Riders, { UpdateRider,DeleteRider, onboardDisplay } from "../data/ridersController";
+import Riders, { UpdateRider,DeleteRider, onboardDisplay,updateTimeRelease } from "../data/ridersController";
 import Stages from "../data/stagesController";
 import Modal from "../components/Modal/Modal";
 import ImportModal from "./ModalMainPage/ImportModal";
@@ -45,7 +45,11 @@ const MainPage = ()=>{
         showStages:false,
         showSetting:false
     });
+    const [releaseTime, setReleaseTime] = useState(""); // Initial release time (HH:mm format)
+    const [interval, setIntervalTime] = useState(30);
+    // const [isRunning, setIsRunning] = useState(false);
     let idRider = useRef();
+    const closeThreshold = 10;
     let ridersParticipants = Riders();
     let onboardRiderDisplay = onboardDisplay();
     let stagesFinished = Stages(); 
@@ -55,12 +59,29 @@ const MainPage = ()=>{
     const goToDashClick = () => {
         history.push("/participants");
     };
+
+    const setStartTimeRider = ()=>{
+        if (!releaseTime) {
+            alert("Please select a start time for the first rider.");
+            return;
+        }
+        updateTimeRelease(releaseTime, interval);
+    };
     
     // let statusDis = [StatusRider.ONBOARD, StatusRider.RERUN,StatusRider.TOUCHDOWN,StatusRider.RUNNING];
     useEffect(()=>{
         if(ridersParticipants){
-            const onboardIndices = onboardRiderDisplay?.map(item => item.index);
-            let onboradRider = ridersParticipants?.filter(item => onboardIndices.includes(item.id));
+            const onboardIndices = onboardRiderDisplay?.map(item => item.index); 
+            console.log("DISPLAY");
+            let onboradRider = ridersParticipants?.filter(item => onboardIndices?.includes(item.id)) // Filter riders
+                .map((item) => ({
+                    ...item,
+                    // start_time: onboardRiderDisplay[index]?.startTime // Add start_time
+                    start_time: item?.status.find(stage => stage.stage_id === parseInt(currentStage.id))?.start_time || null // Add start_time
+
+                }));
+            console.log(onboradRider);
+            
             onboradRider.sort((a, b) => {
                 const indexA = onboardIndices.indexOf(a.id);
                 const indexB = onboardIndices.indexOf(b.id);
@@ -68,7 +89,7 @@ const MainPage = ()=>{
             });
             setDisplay(onboradRider);
         }
-    },[ridersParticipants]);
+    },[ridersParticipants,onboardRiderDisplay]);
 
     useEffect(() => {
         if (typeof categoryServer != "undefined") { 
@@ -85,11 +106,12 @@ const MainPage = ()=>{
         }
 
     }, [stageServer]);
+    
 
     const addRunner = async(details,status,stage)=>{ 
-        console.log("=========Stage==============");
+        // console.log("=========Stage==============");
         let detailStage = await GetStage(parseInt(stage.id));
-        console.log(detailStage);
+        // console.log(detailStage);
         UpdateRider(details, status,detailStage);
     };
 
@@ -105,19 +127,15 @@ const MainPage = ()=>{
     };
  
     const filterCategory = (category) =>{ 
-        console.log("============CATEGORY======================");
+        // console.log("============CATEGORY======================");
         return ridersParticipants?.filter(item => item.category_id === parseInt(category));
     };
     
     const jsonParserStatus = (stages,status) =>{
-        console.log(stages);
+        // console.log(stages);
         let getStage = stages.filter(stage => stage.stage == currentStage?.name); 
         return getStage[0]?.status != status; 
     };
-    
-    // const filteredData = ridersParticipants?.filter((item) =>
-    //     item.status.some(item.status.some((status) => statusDis.includes(status.stu)))
-    // );
 
     // const DeleteAllTables = ()=>{
     //     let text = "Click OK to delete all datas?";
@@ -149,12 +167,41 @@ const MainPage = ()=>{
         });
     };
 
-    return (<> 
+    const handleIntervalChange = (e) => {
+        setIntervalTime(Number(e.target.value));
+    };
+    return (<div className="w-full flex flex-col"> 
         <div className="bg-white flex justify-between">
-            <div className="relative w-32 p-4">
+            <div className="relative w-32 p-4 hidden sm:inline">
                 <img src={mainLogo}/>
             </div>
+            <div className="flex border m-1 p-1 rounded-md gap-2 items-center flex-col sm:flex-row">
+                <div className="flex items-center gap-2">
+                    <div className="hidden sm:inline">
+                        Release Time
+                    </div>
+                    <div>
+                        <input className="truncate block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent focus:border-blue-600 border appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed"
+                            type="datetime-local" value={releaseTime} onChange={(e) => setReleaseTime(e.target.value)}/>
+                    </div>
+                    <div>
+                        <label>
+                            <div className="hidden sm:inline">Interval</div>
+                            <select value={interval} onChange={handleIntervalChange}>
+                                <option value={30}>30 sec</option>
+                                <option value={60}>1 min</option>
+                                <option value={90}>1 min 30 sec</option>
+                                <option value={150}>2 min 30 sec</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold w-32" onClick={setStartTimeRider}>Set</button>
+                </div>
+            </div>
             <div className="bg-white h-[60px] hidden sm:flex space-x-8 text-black pr-8 font-semibold ">
+                
                 <button className="col-span-2 flex justify-center items-center" onClick={()=>setShowModal({...showModal, showCategory:true})}><div>Category</div></button>
                 <button className="col-span-2 flex justify-center items-center" onClick={()=>setShowModal({...showModal, showAddRider:true})}><div>Participants</div></button>
                 <button className="col-span-2 flex justify-center items-center" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}><div>Result</div></button>
@@ -207,6 +254,7 @@ const MainPage = ()=>{
                     <div className="flex flex-wrap gap-4 mt-4">
                         {
                             display?.map((item)=>{
+                                // const isClose = item.remainingTime <= closeThreshold && item.remainingTime > 0;
                                 return(
                                     <div key={item.id} className={(jsonParserStatus(item.status,StatusRider.WAITING) && jsonParserStatus(item.status,StatusRider.FINISHED)) ? "relative w-full sm:w-auto" : "relative w-full sm:w-auto"}>
                                         {
@@ -225,7 +273,9 @@ const MainPage = ()=>{
                                                 toggleCard={toggleCard}
                                                 item={{...item,stage:currentStage}} 
                                                 showWarning={()=>setShowModal({...showModal, showRerun:true})} 
-                                                messageToast={()=>{showToast("success","The record of the rider has been saved","Successfully");}} ></ListItem>
+                                                messageToast={()=>{showToast("success","The record of the rider has been saved","Successfully");}}
+                                                closeThreshold={closeThreshold}
+                                            ></ListItem>
                                         </div>
                                     </div>
                                 );
@@ -283,7 +333,7 @@ const MainPage = ()=>{
             }
             
         </div>
-    </>);
+    </div>);
 };
 
 export default MainPage;

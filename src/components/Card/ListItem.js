@@ -13,7 +13,7 @@ import { TimerContext } from "../../context/TimerContext";
 import { DateDisplay } from "../../util/helper";
 
 const ListItem = (props)=>{
-    const {number, stage, id, start_time=null} = props.item;
+    const {number, stage, id, start_time=null} = props.item || {};
     const prepareToStop = props.prepareToStop;
     const {socketRef} = useContext(TimerContext);
     const [totalTime, setTotalTime] = useState(0);
@@ -21,7 +21,7 @@ const ListItem = (props)=>{
     const [getStartTime,setGetStartTime] = useState("00:00:00:000");
     const [finishedTime,setFinishedTime] = useState("00:00:00:000");
     const [showMessage, setShowMessage] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(null); 
+    const [timeLeft, setTimeLeft] = useState(20); 
     const [alertTriggered, setAlertTriggered] = useState(false);
     const buttonsDisplay = useRef({
         start:true,
@@ -29,7 +29,6 @@ const ListItem = (props)=>{
         rerun:false,
         save:false
     });
-    
     const interval = useRef();
     const startTime = useRef();
     // const socketRef = useRef(null);
@@ -93,7 +92,7 @@ const ListItem = (props)=>{
         }
     
         // Check if we need a countdown
-        if (initialTimeDifference <= 10) {
+        if (initialTimeDifference <= 20) {
             setTimeLeft(initialTimeDifference); // Start countdown immediately
         }
     
@@ -101,9 +100,9 @@ const ListItem = (props)=>{
             const now = new Date();
             const timeDifference = Math.round((startDateTime - now) / 1000);
     
-            if (timeDifference > 0 && timeDifference <= 10) {
+            if (timeDifference > 1 && timeDifference <= 20) {
                 setTimeLeft(timeDifference); // Update countdown
-            } else if (timeDifference <= 0) {
+            } else if (timeDifference <= 1) {
                 clearInterval(interval); // Clear interval when start_time is reached
                 if (!alertTriggered) {
                     playHandle();
@@ -220,7 +219,11 @@ const ListItem = (props)=>{
                             <div className="text-center"> 
                             Start Time: {DateDisplay(start_time)}
                             </div>
-                            <p className="text-center">Countdown: {timeLeft} seconds</p>
+                            {
+                                timeLeft <= 1 ?
+                                    <p className="text-center">Released</p>:
+                                    <p className="text-center">Countdown: {timeLeft || 20}</p>
+                            }
                         </div>
                     
                 } 

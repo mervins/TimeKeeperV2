@@ -148,10 +148,9 @@ const Participants = ()=>{
                                 </label>
                             </div>
                         </div>
-                        <div>
+                        <div className="flex gap-2">
                             <Select items={stageServer} label="Stages" getValue={(value)=>{getStageList(value);}} currentSelect={currentStage?.id}/> 
-                        </div>
-                        <div>
+
                             <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold w-32" onClick={setStartTimeRider}>Set</button>
                         </div>
                     </div>

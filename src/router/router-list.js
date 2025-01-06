@@ -7,12 +7,22 @@ import Stages from "../Pages/Stages/Stages";
 import Participants from "../Pages/Participants/Participants";
 import Results from "../Pages/Participants/Results";
 import NewTabResults from "../Pages/Participants/NewTabResults";
+import ReleaseStation from "../Pages/ReleaseStation/ReleaseStation";
 
 const routes = [
     {
         path: "/timer",
         component: ()=> <MiainPage/>,
         title: "Homepage",
+        layout: "default",
+        access: {
+            global: true,
+        },  
+    },
+    {
+        path: "/releaseTime",
+        component: ()=> <ReleaseStation/>,
+        title: "ReleaseTime",
         layout: "default",
         access: {
             global: true,

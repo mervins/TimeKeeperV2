@@ -1,14 +1,25 @@
 import React, { useState, useEffect} from "react";
 import { DateDisplay } from "../../util/helper";
-
-import GO from "../../assets/GO.mp3";
+import { useDialogHook } from "../../util/customehooks";
+import Countdown from "../../Pages/ReleaseStation/CountDown";
+// import GO from "../../assets/GO.mp3";
 
 const ReleaseItem = (props)=>{
     const { start_time=null, number} = props.item || {};
     const [timeLeft, setTimeLeft] = useState(20); 
     const [alertTriggered, setAlertTriggered] = useState(false);
     
+    let countDown = useDialogHook(Countdown);
+    
     // const socketRef = useRef(null);
+
+    const showCountDown = (timeLeft)=>{
+        countDown({timeLeft,number}).then(callback =>{
+            if(callback.success){
+                alert("released");
+            }
+        });
+    };
 
     useEffect(() => {
         const startDateTime = new Date(start_time);
@@ -29,12 +40,13 @@ const ReleaseItem = (props)=>{
             const now = new Date();
             const timeDifference = Math.round((startDateTime - now) / 1000);
     
-            if (timeDifference > 2 && timeDifference <= 20) {
+            if (timeDifference > 0 && timeDifference <= 20) {
+                showCountDown(timeDifference);
                 setTimeLeft(timeDifference); // Update countdown
-            }else if (timeDifference <= 2) {
+            }else if (timeDifference <= 0) {
                 clearInterval(interval); // Clear interval when start_time is reached
                 if (!alertTriggered) {
-                    playBeep();
+                    // playBeep();
                     // alert(`The start time has begun: ${startDateTime.toLocaleTimeString()}`);
                     setAlertTriggered(true);
                 }
@@ -45,10 +57,10 @@ const ReleaseItem = (props)=>{
         return () => clearInterval(interval);
     }, [start_time, alertTriggered]);
 
-    const playBeep = () => {
-        const audio = new Audio(GO); // Ensure the file path is correct
-        audio.play();
-    };
+    // const playBeep = () => {
+    //     const audio = new Audio(GO); // Ensure the file path is correct
+    //     audio.play();
+    // };
 
     return(<>
         <div className="relative w-full">  

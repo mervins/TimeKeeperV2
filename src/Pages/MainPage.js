@@ -2,7 +2,7 @@ import { useState,useEffect,useRef,useContext } from "react";
 import ListItem from "../components/Card/ListItem";
 import { Close,Menu, AddUser,Setting, Category,Stage,Trophy, Trash} from "../components/Icons/Icons"; 
 import { StatusRider } from "../data/DummyData";
-import Riders, { UpdateRider,DeleteRider, onboardDisplay,updateTimeRelease } from "../data/ridersController";
+import Riders, { UpdateRider,DeleteRider, onboardDisplay } from "../data/ridersController"; //updateTimeRelease
 import Stages from "../data/stagesController";
 import Modal from "../components/Modal/Modal";
 import ImportModal from "./ModalMainPage/ImportModal";
@@ -28,11 +28,13 @@ import mainLogo from "../assets/logo.png";
 import { FcSelfServiceKiosk  } from "react-icons/fc";
 import Clock from "react-live-clock"; 
 import { DateDisplay } from "../util/helper";
+import Release from "../components/Modal/Release/Release";
 
 const MainPage = ()=>{  
     let categoryServer = CategoryContrller();
     let stageServer = StageController();  
     let dashboardDialog = useDialogHook(GoToDashboard);
+    let ReleaseSetting = useDialogHook(Release);
     let {showToast,prepareToStop,toggleCard,positionId} = useContext(TimerContext);
     const [currentCategory,setCurrentCategory] = useState([]);
     const [currentStage,setCurrentStage] = useState();
@@ -47,8 +49,8 @@ const MainPage = ()=>{
         showStages:false,
         showSetting:false
     });
-    const [releaseTime, setReleaseTime] = useState(""); // Initial release time (HH:mm format)
-    const [interval, setIntervalTime] = useState(30);
+    // const [releaseTime, setReleaseTime] = useState(""); // Initial release time (HH:mm format)
+    // const [interval, setIntervalTime] = useState(30);
     // const [isRunning, setIsRunning] = useState(false);
     let idRider = useRef();
     const closeThreshold = 10;
@@ -62,13 +64,13 @@ const MainPage = ()=>{
         history.push("/participants");
     };
 
-    const setStartTimeRider = ()=>{
-        if (!releaseTime) {
-            alert("Please select a start time for the first rider.");
-            return;
-        }
-        updateTimeRelease(releaseTime, interval);
-    };
+    // const setStartTimeRider = ()=>{
+    //     if (!releaseTime) {
+    //         alert("Please select a start time for the first rider.");
+    //         return;
+    //     }
+    //     updateTimeRelease(releaseTime, interval);
+    // };
     
     // let statusDis = [StatusRider.ONBOARD, StatusRider.RERUN,StatusRider.TOUCHDOWN,StatusRider.RUNNING];
     useEffect(()=>{
@@ -169,16 +171,24 @@ const MainPage = ()=>{
         });
     };
 
-    const handleIntervalChange = (e) => {
-        setIntervalTime(Number(e.target.value));
+    const openModalRelease = () =>{
+        ReleaseSetting({},(callback) => {
+            if(callback?.success){
+                showToast("Release Updated");
+            }
+        });
     };
+
+    // const handleIntervalChange = (e) => {
+    //     setIntervalTime(Number(e.target.value));
+    // };
     return (<div className="w-full flex flex-col"> 
         <div className="bg-white flex justify-between">
             <div className="relative w-32 p-4 hidden sm:inline">
                 <img src={mainLogo}/>
             </div>
             <div className="flex mt-2 m-1 p-1 rounded-md gap-2 items-center flex-col sm:flex-row">
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <div className="hidden sm:inline">
                         Release Time
                     </div>
@@ -197,14 +207,15 @@ const MainPage = ()=>{
                             </select>
                         </label>
                     </div>
-                </div>
+                </div> */}
                 <div className="flex gap-4">
-                    <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold w-32" onClick={setStartTimeRider}>Set</button>
+                    {/* <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold w-32" onClick={setStartTimeRider}>Set</button> */}
                     <h1 className='font-bold py-2 text-xl'><Clock format="h:mm:ss A" ticking={true} timezone="Asia/Manila" /></h1>
                 </div>
             </div>
             <div className="bg-white h-[60px] hidden sm:flex space-x-8 text-black pr-8 font-semibold ">
-                
+            
+                <button className="col-span-2 flex justify-center items-center" onClick={openModalRelease}><div>Release Time</div></button>
                 <button className="col-span-2 flex justify-center items-center" onClick={()=>setShowModal({...showModal, showCategory:true})}><div>Category</div></button>
                 <button className="col-span-2 flex justify-center items-center" onClick={()=>setShowModal({...showModal, showAddRider:true})}><div>Participants</div></button>
                 <button className="col-span-2 flex justify-center items-center" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}><div>Result</div></button>
@@ -330,13 +341,14 @@ const MainPage = ()=>{
             <div>
             </div>  
         </div>
-        <div className="bottom-0 fixed bg-white w-full h-[60px] grid sm:hidden grid-cols-10 border-2">
-            <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showCategory:true})}><Category/><div>Category</div></button>
-            <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showAddRider:true})}><AddUser/><div>Participants</div></button>
-            <button className="col-span-2 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}><Trophy/><div>Result</div></button>
-            <button className="col-span-2 flex justify-center items-center flex-col text-xs"  onClick={()=>setShowModal({...showModal, showStages:true})}><Stage/><div>Stage</div></button>
-            {isPageWide ? <div className="col-span-2 flex justify-center items-center flex-col text-xs cursor-pointer" onClick={goToDash}><Setting/><div>Dashboard</div></div> : 
-                <button onClick={()=>setShowModal({...showModal, showNavBar:true})} className="col-span-2 flex justify-center items-center flex-col text-xs" ><Menu/><div>Menu</div></button>
+        <div className="bottom-0 fixed bg-white w-full h-[60px] grid sm:hidden grid-cols-6 border-2">
+            <button className="col-span-1 flex justify-center items-center flex-col text-xs" onClick={openModalRelease}><Category/><div>Release</div></button>
+            <button className="col-span-1 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showCategory:true})}><Category/><div>Category</div></button>
+            <button className="col-span-1 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showAddRider:true})}><AddUser/><div>Participants</div></button>
+            <button className="col-span-1 flex justify-center items-center flex-col text-xs" onClick={()=>setShowModal({...showModal, showResult:true,showNavBar:false})}><Trophy/><div>Result</div></button>
+            <button className="col-span-1 flex justify-center items-center flex-col text-xs"  onClick={()=>setShowModal({...showModal, showStages:true})}><Stage/><div>Stage</div></button>
+            {isPageWide ? <div className="col-span-1 flex justify-center items-center flex-col text-xs cursor-pointer" onClick={goToDash}><Setting/><div>Dashboard</div></div> : 
+                <button onClick={()=>setShowModal({...showModal, showNavBar:true})} className="col-span-1 flex justify-center items-center flex-col text-xs" ><Menu/><div>Menu</div></button>
             }
             
         </div>

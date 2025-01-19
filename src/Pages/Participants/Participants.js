@@ -127,7 +127,7 @@ const Participants = ()=>{
                             </button>
                         </div> 
                     </div>
-                    <div className="flex border m-1 p-1 rounded-md gap-2 items-center flex-col sm:flex-row">
+                    <div className="flex border m-1 mx-8 p-1 rounded-md gap-2 items-center flex-col sm:flex-row">
                         <div className="flex items-center gap-2">
                             <div className="hidden sm:inline">
                                 Release Time

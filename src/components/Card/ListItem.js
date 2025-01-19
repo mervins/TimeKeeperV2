@@ -100,9 +100,9 @@ const ListItem = (props)=>{
             const now = new Date();
             const timeDifference = Math.round((startDateTime - now) / 1000);
     
-            if (timeDifference > 1 && timeDifference <= 20) {
+            if (timeDifference > 0 && timeDifference <= 20) {
                 setTimeLeft(timeDifference); // Update countdown
-            } else if (timeDifference <= 1) {
+            } else if (timeDifference <= 0) {
                 clearInterval(interval); // Clear interval when start_time is reached
                 if (!alertTriggered) {
                     playHandle();
@@ -220,7 +220,7 @@ const ListItem = (props)=>{
                             Start Time: {DateDisplay(start_time)}
                             </div>
                             {
-                                timeLeft <= 1 ?
+                                timeLeft < 1 ?
                                     <p className="text-center">Released</p>:
                                     <p className="text-center">Countdown: {timeLeft || 20}</p>
                             }

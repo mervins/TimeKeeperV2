@@ -2,7 +2,7 @@ import { useState,useEffect,useRef,useContext } from "react";
 // import ReleaseItem from "../../components/Card/ReleaseItem";
 import { Close, AddUser, Trash } from "../../components/Icons/Icons";
 import { StatusRider } from "../../data/DummyData";
-import Riders, { UpdateRider, onboardDisplay,updateTimeRelease } from "../../data/ridersController";
+import Riders, { UpdateRider, onboardDisplay } from "../../data/ridersController"; //updateTimeRelease
 import { useMediaQuery } from "../../Hooks/useMediaQuery";
 import { ButtonIcon } from "../../components/Button";
 import Mobile from "../Device/Mobile";
@@ -15,17 +15,18 @@ import { useDialogHook } from "../../util/customehooks";
 import GoToDashboard from "../../components/Modal/General/LeaveTimer";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 // import mainLogo from "../assets/logo.png";
-import { FcSelfServiceKiosk } from "react-icons/fc";
 import ReleaseItem from "../../components/Card/ReleaseItem";
 import Clock from "react-live-clock"; 
 import { DateDisplay } from "../../util/helper";
 import { Setting,Menu } from "../../components/Icons/Icons";
+import Release from "../../components/Modal/Release/Release";
 
 const ReleaseStation = ()=>{  
     let categoryServer = CategoryContrller();
     let stageServer = StageController();  
     let dashboardDialog = useDialogHook(GoToDashboard);
-    let {showToast,prepareToStop,toggleCard,positionId} = useContext(TimerContext);
+    let ReleaseSetting = useDialogHook(Release);
+    let {showToast,prepareToStop,toggleCard} = useContext(TimerContext);
     const [currentCategory,setCurrentCategory] = useState([]);
     const [currentStage,setCurrentStage] = useState();
     const [display,setDisplay] = useState([]);
@@ -39,8 +40,8 @@ const ReleaseStation = ()=>{
         showStages:false,
         showSetting:false
     });
-    const [releaseTime, setReleaseTime] = useState(""); // Initial release time (HH:mm format)
-    const [interval, setIntervalTime] = useState(30);
+    // const [releaseTime, setReleaseTime] = useState(""); // Initial release time (HH:mm format)
+    // const [interval, setIntervalTime] = useState(30);
     // const [isRunning, setIsRunning] = useState(false);
     let idRider = useRef();
     const closeThreshold = 10;
@@ -53,13 +54,13 @@ const ReleaseStation = ()=>{
         history.push("/participants");
     };
 
-    const setStartTimeRider = ()=>{
-        if (!releaseTime) {
-            alert("Please select a start time for the first rider.");
-            return;
-        }
-        updateTimeRelease(releaseTime, interval);
-    };
+    // const setStartTimeRider = ()=>{
+    //     if (!releaseTime) {
+    //         alert("Please select a start time for the first rider.");
+    //         return;
+    //     }
+    //     updateTimeRelease(releaseTime, interval);
+    // };
     
     // let statusDis = [StatusRider.ONBOARD, StatusRider.RERUN,StatusRider.TOUCHDOWN,StatusRider.RUNNING];
     useEffect(()=>{
@@ -154,8 +155,16 @@ const ReleaseStation = ()=>{
         });
     };
 
-    const handleIntervalChange = (e) => {
-        setIntervalTime(Number(e.target.value));
+    // const handleIntervalChange = (e) => {
+    //     setIntervalTime(Number(e.target.value));
+    // };
+
+    const openReleaseSetting = ()=>{
+        ReleaseSetting({},(callback) => {
+            if(callback?.success){
+                showToast("Release Updated");
+            }
+        });
     };
     return (<div className="w-full flex flex-col"> 
         <div className="bg-white flex justify-center sm:justify-between">
@@ -163,7 +172,7 @@ const ReleaseStation = ()=>{
                 {/* <img src={mainLogo}/> */}
             </div>
             <div className="flex border m-1 p-1 rounded-md gap-2 items-center flex-col sm:flex-row">
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <div className="hidden sm:inline">
                         Release Time
                     </div>
@@ -182,16 +191,19 @@ const ReleaseStation = ()=>{
                             </select>
                         </label>
                     </div>
-                </div>
+                </div> */}
                 <div className="flex gap-4">
-                    <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold w-32" onClick={setStartTimeRider}>Set</button>
+                    {/* <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold w-32" onClick={setStartTimeRider}>Set</button> */}
                     <h1 className='font-bold py-2'><Clock format="h:mm:ss A" ticking={true} timezone="Asia/Manila" /></h1>
 
                 </div>
             </div>
             <div className="bg-white h-[60px] hidden sm:flex space-x-8 text-black pr-8 font-semibold ">
                 {isPageWide ? <div className="col-span-2 flex justify-center items-center flex-col cursor-pointer" onClick={goToDash}><div>Dashboard</div></div> : 
-                    <button onClick={()=>setShowModal({...showModal, showNavBar:true})} className="col-span-2 flex justify-center items-center flex-col text-xs" ><div>Menu</div></button>
+                    <>
+                        <button onClick={()=>setShowModal({...showModal, showNavBar:true})} className="col-span-2 flex justify-center items-center flex-col text-xs" ><div>Menu</div></button>
+                        <button onClick={openReleaseSetting} className="col-span-2 flex justify-center items-center flex-col text-xs" ><div>Release Setting</div></button>
+                    </>
                 }
                 
             </div>
@@ -222,12 +234,6 @@ const ReleaseStation = ()=>{
                                 return(
                                     <div key={item.id} className={(jsonParserStatus(item.status,StatusRider.WAITING) && jsonParserStatus(item.status,StatusRider.FINISHED)) ? "relative w-full sm:w-auto" : "relative w-full sm:w-auto"}>
                                         <button className="absolute z-20 -top-1 -left-2 bg-red-500 rounded-full text-white cursor-pointer" onClick={()=>removeRunner(item,StatusRider.WAITING)}> <Close/></button>
-                                      
-                                        {
-                                            !jsonParserStatus(item.status,StatusRider.RUNNING) &&
-                                            <button className="absolute z-20 top-3 right-[62%] rounded-full text-white cursor-pointer text-2xl flex items-center gap-1"
-                                                onClick={()=>toggleCard(item.id)}> <FcSelfServiceKiosk /> <span className="text-rose-500 text-sm font-bold">{positionId(item.id)}</span></button>
-                                        }
                                         <div className={`
                                             ${(jsonParserStatus(item.status,StatusRider.RUNNING)) ? "" : "shadow-xl shadow-lg shadow-indigo-500/50 border-2 border-blue-500 rounded-md"}
                                             ${prepareToStop.includes(item.id) && (!jsonParserStatus(item.status,StatusRider.RUNNING)) ? "border-2 border-rose-500 rounded-md" : ""}`}> 
@@ -292,7 +298,10 @@ const ReleaseStation = ()=>{
         </div>
         <div className="bottom-0 fixed bg-white w-full h-[60px] grid sm:hidden grid-cols-10 border-2">
             {isPageWide ? <div className="col-span-2 flex justify-center items-center flex-col text-xs cursor-pointer" onClick={goToDash}><Setting/><div>Dashboard</div></div> : 
-                <button onClick={()=>setShowModal({...showModal, showNavBar:true})} className="col-span-2 flex justify-center items-center flex-col text-xs" ><Menu/><div>Menu</div></button>
+                <>
+                    <button onClick={()=>setShowModal({...showModal, showNavBar:true})} className="col-span-2 flex justify-center items-center flex-col text-xs" ><Menu/><div>Menu</div></button>
+                    <button onClick={openReleaseSetting} className="col-span-2 flex justify-center items-center flex-col text-xs" ><Setting/><div>Release</div></button>
+                </>
             }
             
         </div>

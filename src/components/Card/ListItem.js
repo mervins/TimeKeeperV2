@@ -10,9 +10,10 @@ import RerunMessage from "../../Pages/ModalMainPage/RerunMessage";
 // import socketIO from "socket.io-client";
 // import { useSocket } from "../../context/TimerContext";
 import { TimerContext } from "../../context/TimerContext";
+import { DateDisplay } from "../../util/helper";
 
 const ListItem = (props)=>{
-    const {number, stage, id} = props.item;
+    const {number, stage, id, start_time=null} = props.item || {};
     const prepareToStop = props.prepareToStop;
     const {socketRef} = useContext(TimerContext);
     const [totalTime, setTotalTime] = useState(0);
@@ -20,13 +21,14 @@ const ListItem = (props)=>{
     const [getStartTime,setGetStartTime] = useState("00:00:00:000");
     const [finishedTime,setFinishedTime] = useState("00:00:00:000");
     const [showMessage, setShowMessage] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(20); 
+    const [alertTriggered, setAlertTriggered] = useState(false);
     const buttonsDisplay = useRef({
         start:true,
         end:false,
         rerun:false,
         save:false
     });
-    
     const interval = useRef();
     const startTime = useRef();
     // const socketRef = useRef(null);
@@ -79,6 +81,41 @@ const ListItem = (props)=>{
         return () => clearInterval(interval.current);
     }, [running]);
 
+    useEffect(() => {
+        const startDateTime = new Date(start_time);
+        const now = new Date();
+        const initialTimeDifference = Math.round((startDateTime - now) / 1000); // Time difference in seconds
+    
+        if (initialTimeDifference <= 0) {
+            console.log("Start time has already passed.");
+            return;
+        }
+    
+        // Check if we need a countdown
+        if (initialTimeDifference <= 20) {
+            setTimeLeft(initialTimeDifference); // Start countdown immediately
+        }
+    
+        const interval = setInterval(() => {
+            const now = new Date();
+            const timeDifference = Math.round((startDateTime - now) / 1000);
+    
+            if (timeDifference > 0 && timeDifference <= 20) {
+                setTimeLeft(timeDifference); // Update countdown
+            } else if (timeDifference <= 0) {
+                clearInterval(interval); // Clear interval when start_time is reached
+                if (!alertTriggered) {
+                    playHandle();
+                    // alert(`The start time has begun: ${startDateTime.toLocaleTimeString()}`);
+                    setAlertTriggered(true);
+                }
+            }
+        }, 1000);
+    
+        // Cleanup interval on component unmount or when startTime changes
+        return () => clearInterval(interval);
+    }, [start_time, alertTriggered]);
+
     const getOnTime = ()=>{
         var d = new Date();
         let hour = d.getHours();
@@ -106,6 +143,7 @@ const ListItem = (props)=>{
     };
     const rerunHandler = ()=>{ 
         setShowMessage(true); 
+        setAlertTriggered(false);
     };
     const confirmReRun = () =>{ 
         UpdateRider(props.item,StatusRider.RERUN,stage);
@@ -135,7 +173,7 @@ const ListItem = (props)=>{
         {showMessage && <Modal>
             <RerunMessage closeModal={()=>setShowMessage(false)} confirmReRun={()=>confirmReRun} label="Confirm" message="Could you please confirm that you want to run the rider?"/>
         </Modal>} 
-        <div className="relative w-full">   
+        <div className="relative w-full">  
             <div className="border py-2 text-black font-bold shadow-md flex items-center rounded-lg bg-white w-full sm:w-64"> 
                 <div className="pl-1"><center className={`${prepareToStop.includes(id) && running ? "text-red-500" : "text-sx"} `}>Rider</center>
                     <div className="flex items-center">
@@ -174,6 +212,22 @@ const ListItem = (props)=>{
                     }
                 </div>
             </div>  
+            <div>
+                {
+                    !running &&
+                        <div className="flex justify-center flex-col w-full bg-white rounded-md">
+                            <div className="text-center"> 
+                            Start Time: {DateDisplay(start_time)}
+                            </div>
+                            {
+                                timeLeft < 1 ?
+                                    <p className="text-center">Released</p>:
+                                    <p className="text-center">Countdown: {timeLeft || 20}</p>
+                            }
+                        </div>
+                    
+                } 
+            </div>
         </div> 
     </>);
 };

@@ -166,25 +166,36 @@ const Setting = ()=>{
                             </button>
                         </div>
                     </div>
-                    <div className="m-2 relative flex">
-                        <div className="mx-4 flex flex-col gap-2 border rounded-xl overflow-hidden bg-white border-[#d8d8d8] py-1 px-1 w-full">
-                            <div className="w-64 border-b">
-                                <label className="p-4 mb-2 font-semibold">Race Mode</label>
-                                <Select
-                                    items={raceType} 
-                                    label="Type" 
-                                    getValue={value=>setMode(value)} 
-                                    currentSelect={mode}
-                                />
-                            </div>
-                            <div className="w-64 border-b">
-                                <label className="p-4 mb-2 font-semibold">Ranking</label>
-                                <Select
-                                    items={stages} 
-                                    label="Sort by" 
-                                    getValue={value=>setCurrentStage(value)} 
-                                    currentSelect={currentStage}
-                                />
+                    <div className="m-2 relative flex flex-col md:flex-row gap-2">
+                        <div className="mx-4 flex flex-col sm gap-2 border rounded-xl overflow-hidden bg-white border-[#d8d8d8] py-1 px-1 w-full">
+                            <div className="flex gap-2 flex-wrap">
+                                <div className="w-64 ">
+                                    <label className="p-4 mb-2 font-semibold">Race Mode</label>
+                                    <Select
+                                        items={raceType} 
+                                        label="Type" 
+                                        getValue={value=>setMode(value)} 
+                                        currentSelect={mode}
+                                    />
+                                </div>
+                                <div className="w-64">
+                                    <label className="p-4 mb-2 font-semibold">Ranking</label>
+                                    <Select
+                                        items={stages} 
+                                        label="Sort by" 
+                                        getValue={value=>setCurrentStage(value)} 
+                                        currentSelect={currentStage}
+                                    />
+                                </div>
+                                <div className="w-64 ">
+                                    <label className="p-4 mb-2 font-semibold">Timer</label>
+                                    <Select
+                                        items={stages} 
+                                        label="Setup" 
+                                        getValue={value=>setCurrentStage(value)} 
+                                        currentSelect={currentStage}
+                                    />
+                                </div>
                             </div>
                             <div className="flex gap-4 items-center px-4 border-b pb-2">
                                 <label className="font-semibold">Participants</label>

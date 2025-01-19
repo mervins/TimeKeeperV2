@@ -72,6 +72,11 @@ const Sidebar = ({children})=>{
             path: "/timer"
         },
         {
+            icon:<FcAlarmClock className="text-2xl"/>,
+            label: "Release Time",
+            path: "/releaseTime"
+        },
+        {
             icon:<FcHome className="text-2xl"/>,
             label: "Home Page",
             path: "/"

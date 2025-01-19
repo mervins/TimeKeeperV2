@@ -7,7 +7,7 @@ import Table from "../../components/Table/Table";
 import TableBody from "../../components/Table/TableBody";
 import TableHead from "../../components/Table/TableHead";
 import TableCell from "../../components/Table/TableCell";
-import Riders from "../../data/ridersController";
+import Riders,{timeReleaseStage} from "../../data/ridersController";
 import ParticipantsModal from "../../components/Modal/Create/Participants";
 import { useDialogHook } from "../../util/customehooks";
 import { FaRegTrashAlt,FaPen  } from "react-icons/fa";
@@ -16,7 +16,9 @@ import UpdateParticipants from "../../components/Modal/Update/UpdateParticipants
 import DeleteModal from "../../components/Modal/Delete/DeleteParticipants";
 import { nameCustomize } from "../../util/helper";
 import { TimerContext } from "../../context/TimerContext";
-
+import StageController from "../../data/stageController";
+import { GetStage } from "../../data/stageController";
+import { DateDisplay } from "../../util/helper";
 
 const Participants = ()=>{
     let categoryServer = CategoryContrller();
@@ -25,6 +27,10 @@ const Participants = ()=>{
     // eslint-disable-next-line no-unused-vars
     const [participant, setParticipant] = useState({});
     const {showToast} = useContext(TimerContext);
+    let stageServer = StageController();
+    const [releaseTime, setReleaseTime] = useState(""); // Initial release time (HH:mm format)
+    const [interval, setIntervalTime] = useState(30);
+    const [currentStage,setCurrentStage] = useState();
 
     const createParticipants = useDialogHook(ParticipantsModal);
     const editParticipans = useDialogHook(UpdateParticipants);
@@ -35,6 +41,15 @@ const Participants = ()=>{
             console.log(catID);
         }
     }, [categoryServer]);
+
+    useEffect(() => {
+        console.log(stageServer);
+        if (typeof stageServer != "undefined") { 
+            setCurrentStage(stageServer[0]);
+            console.log(stageServer);
+        }
+
+    }, [stageServer]);
 
     const createHandle = ()=>{
         createParticipants({ riders:ridersParticipants, categoryServer }, (callback) => {
@@ -61,6 +76,25 @@ const Participants = ()=>{
             }
         });
     };
+
+    const handleIntervalChange = (e) => {
+        setIntervalTime(Number(e.target.value));
+    };
+    const setStartTimeRider = ()=>{
+        if (!releaseTime) {
+            alert("Please select a start time for the first rider.");
+            return;
+        }
+        console.log(catID);
+        timeReleaseStage(releaseTime, interval,parseInt(currentStage.id),parseInt(catID.id));
+    };
+
+    let getStageList = async(id)=>{
+        let detailStage = await GetStage(parseInt(id));
+        setCurrentStage(detailStage);
+        return detailStage;
+    };
+
     return (<>
         <Sidebar>
             <div>
@@ -91,6 +125,33 @@ const Participants = ()=>{
                             <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold " onClick={createHandle}>
                                 Add Participant
                             </button>
+                        </div> 
+                    </div>
+                    <div className="flex border m-1 mx-8 p-1 rounded-md gap-2 items-center flex-col sm:flex-row">
+                        <div className="flex items-center gap-2">
+                            <div className="hidden sm:inline">
+                                Release Time
+                            </div>
+                            <div>
+                                <input className="truncate block py-2.5 px-0 text-sm text-gray-900 bg-transparent focus:border-blue-600 border appearance-none focus:outline-none focus:ring-0 peer rounded-lg px-[15px] disabled:cursor-not-allowed"
+                                    type="datetime-local" value={releaseTime} onChange={(e) => setReleaseTime(e.target.value)}/>
+                            </div>
+                            <div>
+                                <label>
+                                    <div className="hidden sm:inline">Interval</div>
+                                    <select value={interval} onChange={handleIntervalChange}>
+                                        <option value={30}>30 sec</option>
+                                        <option value={60}>1 min</option>
+                                        <option value={90}>1 min 30 sec</option>
+                                        <option value={150}>2 min 30 sec</option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div className="flex gap-2">
+                            <Select items={stageServer} label="Stages" getValue={(value)=>{getStageList(value);}} currentSelect={currentStage?.id}/> 
+
+                            <button className="bg-[#0d6ed1] text-white py-2 px-4 p-2 border rounded-lg text-xs font-bold w-32" onClick={setStartTimeRider}>Set</button>
                         </div>
                     </div>
                     <div className="text-[8px] md:text-base px-1">  
@@ -106,6 +167,13 @@ const Participants = ()=>{
                                                             {header}
                                                         </TableHead> 
                                                     );
+                                                })
+                                            }
+                                            {
+                                                stageServer?.map((stage,ind)=>{
+                                                    return <TableHead key={ind} className="text-center">
+                                                        {stage.name}
+                                                    </TableHead> ;
                                                 })
                                             }
                                         </tr>
@@ -129,7 +197,7 @@ const Participants = ()=>{
                                                         </TableCell>  
                                                         <TableCell className="py-2 px-2 text-[12px] text-black text-center">
                                                             {catID?.name}
-                                                        </TableCell>
+                                                        </TableCell> 
                                                         <TableCell className="py-2 px-2 text-[12px] text-black text-center flex justify-center gap-4">
                                                             <button className="text-base" onClick={()=>editHandler(result)}>
                                                                 <FaPen />
@@ -138,6 +206,28 @@ const Participants = ()=>{
                                                                 <FaRegTrashAlt/>
                                                             </button>
                                                         </TableCell>
+                                                        {
+                                                            stageServer?.map((serverStg,ind)=>{
+                                                                return <TableCell key={ind} className="py-2 px-2 text-[12px] text-center">
+                                                                    {
+                                                                        result?.status?.map((stage,key)=>{
+                                                                            return(
+                                                                                <> 
+                                                                                    {
+                                                                                        serverStg.id === stage.stage_id &&
+                                                                                            <div key={key} className="flex gap-4 items-center justify-center">
+                                                                                                {/* <NumberToTime key={key} stages={stage}/> */}
+                                                                                                <div className="font-bold cursor-pointer" >{DateDisplay(stage.start_time)}</div>
+                                                                                            </div>
+                                                                                    }
+                                                                                    
+                                                                                </>
+                                                                            );
+                                                                        })
+                                                                    }
+                                                                </TableCell>;
+                                                            })
+                                                        }
                                                     </tr> 
                                                 );
                                             })
